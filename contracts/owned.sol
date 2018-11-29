@@ -1,12 +1,14 @@
 pragma solidity ^0.5;
 
 // Based on the solidity docs for common patterns: https://solidity.readthedocs.io/en/v0.5.0/common-patterns.html?highlight=seller
-contract owned {
+contract Owned {
     constructor() public { seller = msg.sender; }
     uint public creationTime = now;
     address payable public seller;
+    address payable public buyer;
+    address public intermediator;
     bool contractClosed = false;
-
+    
     modifier onlyBy(address _account) 
     {
         require(
@@ -28,6 +30,15 @@ contract owned {
         require(
             contractClosed == false,
             "The contract is closed."
+        );
+        _;
+    }
+
+    modifier onlyMemberOfContract() {
+        require(
+            msg.sender == seller || 
+            msg.sender == buyer || 
+            msg.sender == intermediator
         );
         _;
     }

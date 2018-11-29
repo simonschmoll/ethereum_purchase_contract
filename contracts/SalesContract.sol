@@ -1,9 +1,9 @@
 pragma solidity ^0.5;
-import "./owned.sol";
+import "./Retraction.sol";
 
-contract SalesContract is owned {
+contract SalesContract is Retraction {
 
-    event ItemIsPaid(
+    event PaidItem(
         address seller,
         address buyer,
         uint price
@@ -13,20 +13,18 @@ contract SalesContract is owned {
         address buyer,
         uint price
     );
-    address payable public buyer;
-    address public intermediator;
     struct Item {
         string name;
         uint price;   
         bool itemReceived;
         bool itemPaid;
     }
-    Item item;
+    Item public item;
 
-    // constructor(address payable _buyer, address _intermediator) public {
-    //     buyer = _buyer;
-    //     intermediator = _intermediator;
-    // }
+    constructor(address payable _buyer, address _intermediator) public {
+        buyer = _buyer;
+        intermediator = _intermediator;
+    }
 
     function setItem(string memory _name, uint _price) public onlyBy(seller) {
         item.name = _name;
@@ -36,19 +34,16 @@ contract SalesContract is owned {
     }
     
     function payItem() public payable onlyBy(buyer) contractIntact() {
-        require(msg.value == item.price , "The paid amount was not equal to the listed price of the item");
-        item.itemPaid == true;
-        item.price == msg.value;
-        emit ItemIsPaid(seller, msg.sender, msg.value);
+        require(msg.value == item.price, "The paid amount was not equal to the listed price of the item");
+        item.itemPaid = true;
+        emit PaidItem(seller, msg.sender, msg.value);
     }
 
-    function itemReceived() public onlyBy(buyer) contractIntact() {
+    function itemReceived() public onlyBy(buyer) contractIntact() itemIsPaid() {
         item.itemReceived = true;
     }
 
-    function withdraw() public onlyBy(seller) contractIntact() {
-        require(item.itemPaid == true);
-        require(item.itemReceived == true);
+    function withdraw() public onlyBy(seller) contractIntact() itemIsPaid() itemIsReceived() {
         contractClosed = true;
         msg.sender.transfer(item.price);
         emit ContractSettled(msg.sender, buyer, item.price);
@@ -56,5 +51,15 @@ contract SalesContract is owned {
 
     function getContractBalance() public view returns (uint) {
         return address(this).balance;
+    }
+
+    modifier itemIsPaid() {
+        require(item.itemPaid == true, "Item not paid");
+        _;
+    }
+
+    modifier itemIsReceived() {
+        require(item.itemReceived == true, "Item not received");
+        _;
     }
 }
