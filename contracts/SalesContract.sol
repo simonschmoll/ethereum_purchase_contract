@@ -8,7 +8,7 @@ contract SalesContract is Retraction {
         address buyer,
         uint price
     );
-    event ContractSettled(
+    event contractIsSettled(
         address seller,
         address buyer,
         uint price
@@ -64,9 +64,21 @@ contract SalesContract is Retraction {
         itemIsPaid() 
         itemIsReceived() 
     {
-        contractSettled = true;
+        contractIsClosed = true;
         msg.sender.transfer(item.price);
-        emit ContractSettled(msg.sender, buyer, item.price);
+        emit contractIsSettled(msg.sender, buyer, item.price);
+    }
+
+    function withdrawAfterRetraction() 
+        public
+        onlyBy(buyer) 
+        contractIsRetracted() 
+        contractIntact()
+    {
+        contractIsClosed = true;
+        msg.sender.transfer(item.price);
+        emit withdrawlFromRetraction(msg.sender, item.price);
+        
     }
 
     function getContractBalance() public view returns (uint) {

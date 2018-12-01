@@ -19,7 +19,6 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
         // Given 
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
-        let balanceBefore = new BigNumber(await web3.eth.getBalance(instance.address))
 
         // When 
         await instance.retractContract({from: buyer})
@@ -27,18 +26,11 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
-        assert.strictEqual(await instance.contractSettled(), true)
-        
-        // Should not be necessary? Normally web3 returns bigNumber
-        let balanceAfter = new BigNumber(await web3.eth.getBalance(instance.address))
-        assert.strictEqual(balanceBefore.toString(), price.toString())
-        assert.strictEqual(balanceAfter.toString(), '0')
     })
 
     it("Retract unpaid contract buyer and intermediator", async () => {
         // Given 
         await instance.setItem(book, price)
-        let balanceBefore = new BigNumber(await web3.eth.getBalance(instance.address))
 
         // When 
         await instance.retractContract({from: buyer})
@@ -46,19 +38,12 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
-        assert.strictEqual(await instance.contractSettled(), true)
-        
-        // Should not be necessary? Normally web3 returns bigNumber
-        let balanceAfter = new BigNumber(await web3.eth.getBalance(instance.address))
-        assert.strictEqual(balanceBefore.toString(), '0')
-        assert.strictEqual(balanceAfter.toString(), '0')
     })
 
     it("Retract paid contract seller and intermediator", async () => {
         // Given 
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
-        let balanceBefore = new BigNumber(await web3.eth.getBalance(instance.address))
 
         // When 
         await instance.retractContract({from: seller})
@@ -66,18 +51,11 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
-        assert.strictEqual(await instance.contractSettled(), true)
-        
-        // Should not be necessary? Normally web3 returns bigNumber
-        let balanceAfter = new BigNumber(await web3.eth.getBalance(instance.address))
-        assert.strictEqual(balanceBefore.toString(), price.toString())
-        assert.strictEqual(balanceAfter.toString(), '0')
     })
 
     it("Retract unpaid contract seller and intermediator", async () => {
         // Given 
         await instance.setItem(book, price)
-        let balanceBefore = new BigNumber(await web3.eth.getBalance(instance.address))
 
         // When 
         await instance.retractContract({from: seller})
@@ -85,48 +63,63 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
-        assert.strictEqual(await instance.contractSettled(), true)
-        
-        // Should not be necessary? Normally web3 returns bigNumber
-        let balanceAfter = new BigNumber(await web3.eth.getBalance(instance.address))
-        assert.strictEqual(balanceBefore.toString(), '0')
-        assert.strictEqual(balanceAfter.toString(), '0')
     })
 
     it("Retract paid contract seller and buyer", async () => {
         // Given 
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
-        let balanceBefore = new BigNumber(await web3.eth.getBalance(instance.address))
 
         // When 
         await instance.retractContract({from: seller})
         await instance.retractContract({from: buyer})
+
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
-        assert.strictEqual(await instance.contractSettled(), true)
-        
-        // Should not be necessary? Normally web3 returns bigNumber
-        let balanceAfter = new BigNumber(await web3.eth.getBalance(instance.address))
-        assert.strictEqual(balanceBefore.toString(), price.toString())
-        assert.strictEqual(balanceAfter.toString(), '0')
     })
 
-    it("Retract paid contract seller and buyer", async () => {
+    it("Retract unpaid contract seller and buyer", async () => {
         // Given 
         await instance.setItem(book, price)
-        let balanceBefore = new BigNumber(await web3.eth.getBalance(instance.address))
 
         // When 
         await instance.retractContract({from: seller})
         await instance.retractContract({from: buyer})
+
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
-        assert.strictEqual(await instance.contractSettled(), true)
+    })
+    
+    it("Withdraw after retraction", async () => {
+        // Given 
+        await instance.setItem(book, price)
+        await instance.payItem({value: price, from: buyer})
+        let balanceContractBefore = new BigNumber(await web3.eth.getBalance(instance.address))
+        await instance.retractContract({from: seller})
+        await instance.retractContract({from: buyer})
+
+        // When 
         
+
+        let balanceBuyerBefore = new BigNumber(await web3.eth.getBalance(buyer))
+        let hash = await instance.withdrawAfterRetraction({from: buyer})
+        let balanceRaw = await web3.eth.getBalance(buyer)
+        let expectedBalanceBuyerAfter = new BigNumber(balanceRaw)
+        let tx = hash["tx"]
+        let transactionReceipt = await web3.eth.getTransactionReceipt(tx)
+        let gasUsed = transactionReceipt.gasUsed
+        let transaction = await web3.eth.getTransaction(tx);
+        let gasPrice = transaction.gasPrice
+        let gasCost = new BigNumber(gasPrice * gasUsed)
+        let actualAfterBalanceBuyer = balanceBuyerBefore.minus(gasCost).plus(price)
+
+        // Then
         // Should not be necessary? Normally web3 returns bigNumber
-        let balanceAfter = new BigNumber(await web3.eth.getBalance(instance.address))
-        assert.strictEqual(balanceBefore.toString(),'0')
-        assert.strictEqual(balanceAfter.toString(), '0')
+        let balanceContractAfter = new BigNumber(await web3.eth.getBalance(instance.address))
+            
+        assert.strictEqual(actualAfterBalanceBuyer.toString(), expectedBalanceBuyerAfter.toString())
+        assert.strictEqual(balanceContractBefore.toString(), price.toString())
+        assert.strictEqual(balanceContractAfter.toString(), '0')
+        assert.strictEqual(await instance.contractIsClosed(), true)
     })
 })

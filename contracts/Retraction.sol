@@ -2,13 +2,19 @@ pragma solidity ^0.5;
 import "./Owned.sol";
 
 contract Retraction is Owned {
+    bool public contractRetracted = false;
     struct Agreement {
         bool sellerRetract;
         bool buyerRetract;
         bool intermediatorRetract;
     }
-    bool public contractRetracted = false;
     Agreement public agreement;
+    
+    event withdrawlFromRetraction(
+        address buyer,
+        uint price
+    );  
+    
     constructor () public {
         agreement.sellerRetract = false;
         agreement.buyerRetract = false; 
@@ -31,10 +37,14 @@ contract Retraction is Owned {
             (agreement.sellerRetract && agreement.intermediatorRetract) ||
             (agreement.buyerRetract && agreement.intermediatorRetract)) {
             contractRetracted = true;
-            contractSettled = true;
-            if(address(this).balance > 0) {
-                buyer.transfer(address(this).balance);
-            }
         }
+    }
+
+    modifier contractIsRetracted() {
+        require(
+            contractRetracted == true, 
+            "Contract is not retracted"
+        );
+        _;
     }
 }

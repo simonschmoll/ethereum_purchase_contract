@@ -78,4 +78,20 @@ contract('Successful Tests for SalesContract', async (accounts) => {
             assert.ok(/revert/.test(error))
         }
     })
+    
+    it("Withdraw money after retraction without permission", async () => {
+        // Given 
+        await instance.setItem(book, price)
+        await instance.payItem({value: price, from: buyer}) 
+        await instance.retractContract({from: seller})
+        await instance.retractContract({from: buyer})  
+        try {
+            // When
+            await instance.withdrawAfterRetraction({from: buyer})
+            assert.fail            
+        } catch (error) {
+            // Then
+            assert.ok(/revert/.test(error))
+        }
+    }) 
 })

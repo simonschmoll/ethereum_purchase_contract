@@ -96,8 +96,7 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         await instance.itemReceived({from: buyer})
         
         // When
-        let balanceBeforeasdasd = await web3.eth.getBalance(seller)
-        let balanceBefore = new BigNumber(balanceBeforeasdasd)
+        let balanceBefore = new BigNumber(await web3.eth.getBalance(seller))
         let hash = await instance.withdraw({from: seller});
         let balanceRaw = await web3.eth.getBalance(seller)
         let expectedBalanceAfter = new BigNumber(balanceRaw)

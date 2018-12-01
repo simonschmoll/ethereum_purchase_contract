@@ -7,7 +7,7 @@ contract Owned {
     address payable public seller;
     address payable public buyer;
     address public intermediator;
-    bool public contractSettled = false;
+    bool public contractIsClosed = false;
     
     modifier onlyBy(address _account) 
     {
@@ -28,7 +28,7 @@ contract Owned {
 
     modifier contractIntact() {
         require(
-            contractSettled == false,
+            contractIsClosed == false,
             "The contract is closed."
         );
         _;
