@@ -5,13 +5,13 @@ const SalesContract = artifacts.require("SalesContract");
 contract('Successful Tests for SalesContract', async (accounts) => {
     let instance
     const book = "book"
-
-    // TODO: Why is passing of bigger price a problem? 
-    var price = 1e+15
+    var price
+    const [seller, buyer, intermediator, randomGuy] = accounts
 
     beforeEach('Setup of contract', async function () {
-        // When
-        instance = await SalesContract.new(accounts[1], accounts[2])
+        // Given
+        instance = await SalesContract.new(buyer, intermediator)
+        price = web3.utils.toBN((web3.utils.toWei('1', 'ether')))
     })
 
     it("Buyer is initialized", async () => {
@@ -19,7 +19,7 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let buyer = await instance.buyer()
         
         // Assert
-        assert.equal(buyer, accounts[1])
+        assert.strictEqual(buyer, buyer)
     })
 
     it("Intermediator is initialized", async () => {
@@ -27,7 +27,7 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let intermediator = await instance.intermediator()
         
         // Assert
-        assert.equal(intermediator, accounts[2]);
+        assert.strictEqual(intermediator, intermediator);
     })
 
     it("Seller is initialized", async () => {
@@ -35,7 +35,7 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let seller = await instance.seller()
 
         // Assert
-        assert.equal(seller, accounts[0])
+        assert.strictEqual(seller, seller)
     })
 
     it("Item is set by seller", async () => {
@@ -44,62 +44,62 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let item = await instance.item()
         
         // Then
-        assert.equal(item.name, book);
-        assert.equal(item.price, price)
+        assert.strictEqual(item.name, book);
+        assert.strictEqual(item.price.toString(), price.toString())
     })
 
     it("Item is paid by buyer", async () => {
-        // Then
+        // Given
         await instance.setItem(book, price)
         
         // When
-        await instance.payItem({value: price, from: accounts[1]})
+        await instance.payItem({value: price, from: buyer})
         let item = await instance.item()
         
         // Assert
-        assert.equal(item.itemPaid, true)
+        assert.strictEqual(item.itemPaid, true)
 
         // Assert that the contract now has the right balance
-        let balance = await web3.eth.getBalance(instance.address)
-        assert.equal(balance, price)
+        let balance = new BigNumber(await web3.eth.getBalance(instance.address))
+        assert.strictEqual(balance.toString(), price.toString())
     })
 
     it("item is received by buyer", async () => {
         // Given
         await instance.setItem(book, price)
-        await instance.payItem({value: price, from: accounts[1]})
+        await instance.payItem({value: price, from: buyer})
         
         // When
-        await instance.itemReceived({from: accounts[1]})
+        await instance.itemReceived({from: buyer})
         let item = await instance.item()
         
         // Then
-        assert.equal(item.itemReceived, true)
+        assert.strictEqual(item.itemReceived, true)
     })
 
     it("Get contract balance", async () => {
         // Given
         await instance.setItem(book, price)
-        await instance.payItem({value: price, from: accounts[1]})
+        await instance.payItem({value: price, from: buyer})
         
         // When
-        let balance = await instance.getContractBalance()
+        let balance = new BigNumber(await instance.getContractBalance())
         
         // Then
-        assert.equal(balance, price)
+        assert.strictEqual(balance.toString(), price.toString())
     })
 
     it("Withdraw money by seller", async () => {
         // Given
         await instance.setItem(book, price)
-        await instance.payItem({value: price, from: accounts[1]})
-        await instance.itemReceived({from: accounts[1]})
+        await instance.payItem({value: price, from: buyer})
+        await instance.itemReceived({from: buyer})
         
         // When
-        let balanceBeforeasdasd = await web3.eth.getBalance(accounts[0])
+        let balanceBeforeasdasd = await web3.eth.getBalance(seller)
         let balanceBefore = new BigNumber(balanceBeforeasdasd)
-        let hash = await instance.withdraw({from: accounts[0]});
-        let balanceRaw = await web3.eth.getBalance(accounts[0])
+        let hash = await instance.withdraw({from: seller});
+        let balanceRaw = await web3.eth.getBalance(seller)
         let expectedBalanceAfter = new BigNumber(balanceRaw)
         let tx = hash["tx"]
 
@@ -111,8 +111,7 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let actualAfterBalance = balanceBefore.minus(gasCost).plus(price)
 
         //Then
-        assert.equal(actualAfterBalance.toNumber(), expectedBalanceAfter.toNumber())
-        // console.log(transaction)
+        assert.strictEqual(actualAfterBalance.toString(), expectedBalanceAfter.toString())
     })
 })
 

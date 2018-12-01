@@ -21,30 +21,50 @@ contract SalesContract is Retraction {
     }
     Item public item;
 
-    constructor(address payable _buyer, address _intermediator) public {
+    constructor(address payable _buyer, address _intermediator) 
+        public 
+    {
         buyer = _buyer;
         intermediator = _intermediator;
     }
 
-    function setItem(string memory _name, uint _price) public onlyBy(seller) {
+    function setItem(string memory _name, uint _price) 
+        public 
+        onlyBy(seller) 
+    {
         item.name = _name;
         item.price = _price;
         item.itemPaid = false;
         item.itemReceived = false;
     }
     
-    function payItem() public payable onlyBy(buyer) contractIntact() {
-        require(msg.value == item.price, "The paid amount was not equal to the listed price of the item");
+    function payItem() 
+        public 
+        payable 
+        onlyBy(buyer) 
+        contractIntact() 
+        paymentEqualPrice() {
         item.itemPaid = true;
         emit PaidItem(seller, msg.sender, msg.value);
     }
 
-    function itemReceived() public onlyBy(buyer) contractIntact() itemIsPaid() {
+    function itemReceived() 
+        public 
+        onlyBy(buyer) 
+        contractIntact() 
+        itemIsPaid() 
+    {
         item.itemReceived = true;
     }
 
-    function withdraw() public onlyBy(seller) contractIntact() itemIsPaid() itemIsReceived() {
-        contractClosed = true;
+    function withdraw() 
+        public 
+        onlyBy(seller) 
+        contractIntact() 
+        itemIsPaid() 
+        itemIsReceived() 
+    {
+        contractSettled = true;
         msg.sender.transfer(item.price);
         emit ContractSettled(msg.sender, buyer, item.price);
     }
@@ -53,13 +73,30 @@ contract SalesContract is Retraction {
         return address(this).balance;
     }
 
-    modifier itemIsPaid() {
-        require(item.itemPaid == true, "Item not paid");
+    modifier itemIsPaid() 
+    {
+        require(
+            item.itemPaid == true, 
+            "Item not paid"
+            );
         _;
     }
 
-    modifier itemIsReceived() {
-        require(item.itemReceived == true, "Item not received");
+    modifier itemIsReceived() 
+    {
+        require(
+            item.itemReceived == true, 
+            "Item not received"
+            );
+        _;
+    }
+
+    modifier paymentEqualPrice() 
+    {
+        require(
+            msg.value == item.price, 
+            "The paid amount was not equal to the listed price of the item"
+            );
         _;
     }
 }

@@ -7,7 +7,7 @@ contract Retraction is Owned {
         bool buyerRetract;
         bool intermediatorRetract;
     }
-    bool retracted = false;
+    bool public contractRetracted = false;
     Agreement public agreement;
     constructor () public {
         agreement.sellerRetract = false;
@@ -15,7 +15,11 @@ contract Retraction is Owned {
         agreement.intermediatorRetract = false;  
     }
 
-    function retractContract() public onlyMemberOfContract() {
+    function retractContract() 
+        public 
+        onlyMemberOfContract() 
+        contractIntact()
+    {
         if(msg.sender == seller) {
             agreement.sellerRetract = true;
         } else if (msg.sender == buyer) {
@@ -26,8 +30,8 @@ contract Retraction is Owned {
         if((agreement.sellerRetract && agreement.buyerRetract) || 
             (agreement.sellerRetract && agreement.intermediatorRetract) ||
             (agreement.buyerRetract && agreement.intermediatorRetract)) {
-            retracted = true;
-            contractClosed = true;
+            contractRetracted = true;
+            contractSettled = true;
             if(address(this).balance > 0) {
                 buyer.transfer(address(this).balance);
             }
