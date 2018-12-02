@@ -2,11 +2,12 @@ const BigNumber = require('bignumber.js')
 
 const SalesContract = artifacts.require("SalesContract");
 
-contract('Successful Tests for SalesContract', async (accounts) => {
+contract('Error test for sales contract', async (accounts) => {
     let instance
     const book = "book"
     var price
     const [seller, buyer, intermediator, randomGuy] = accounts
+
 
     beforeEach('Setup of contract', async function () {
         // Given
@@ -14,24 +15,12 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         price = web3.utils.toBN((web3.utils.toWei('1', 'ether')))
     })
 
-    it("Item is tried to set by other than seller", async () => {
-        try {
-            // When
-            await instance.setItem(book, price, {from: buyer})
-            assert.fail()
-        } catch (error) {
-            // Then
-            assert.ok(/revert/.test(error))
-        }
-    })
-
-    it("Item paid by other than buyer", async () => {
+    it("Buyer wants to mark item as received, but it is not yet paid", async () => {    
         // Given
         await instance.setItem(book, price)
         
         try {
-            // When
-            await instance.payItem({value: price, from: seller})
+            await instance.itemReceived({from: buyer})
             assert.fail()            
         } catch (error) {
             // Then
@@ -39,39 +28,14 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         }
     })
 
-    it("Item received by other than buyer", async () => {
-        // Given
-        await instance.setItem(book, price)
-        await instance.payItem({value: price, from: buyer})
-        try {
-            // When
-            await instance.itemReceived({from: seller})
-            assert.fail()            
-        } catch (error) {
-            // Then
-            assert.ok(/revert/.test(error))
-        }
-    })
-
-    it("Money withdraw by other than seller", async () => {
+    it("Contract is not intact anymore, but seller wants to withdraw money", async () => {    
         // Given
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
         await instance.itemReceived({from: buyer})
+        await instance.withdraw({from: seller})
         try {
-            // When
-            await instance.withdraw({from: buyer});
-            assert.fail()           
-        } catch (error) {
-            // Then
-            assert.ok(/revert/.test(error))
-        }
-    })
-
-    it("Retracted contract without permission", async () => {
-        try {
-            // When
-            await instance.retractContract({from: randomGuy});
+            await instance.withdraw({from: seller})
             assert.fail()            
         } catch (error) {
             // Then
@@ -79,4 +43,29 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         }
     })
 
+    it("Item is not marked as received, but seller wants to withdraw money", async () => {    
+        // Given
+        await instance.setItem(book, price)
+        await instance.payItem({value: price, from: buyer})
+        try {
+            await instance.withdraw({from: seller})
+            assert.fail()            
+        } catch (error) {
+            // Then
+            assert.ok(/revert/.test(error))
+        }
+    })
+
+    it("Contract is not retracted and buyer wants to withdraw money", async () => {    
+        // Given
+        await instance.setItem(book, price)
+        await instance.payItem({value: price, from: buyer})
+        try {
+            await instance.withdrawAfterRetraction({from: buyer})
+            assert.fail()            
+        } catch (error) {
+            // Then
+            assert.ok(/revert/.test(error))
+        }
+    }) 
 })

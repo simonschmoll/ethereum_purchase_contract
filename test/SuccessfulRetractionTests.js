@@ -23,9 +23,14 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
         // When 
         await instance.retractContract({from: buyer})
         await instance.retractContract({from: intermediator})
+        let agreement = await instance.agreement()
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
+        assert.strictEqual(agreement.buyerRetract, true)
+        assert.strictEqual(agreement.intermediatorRetract, true)
+        assert.strictEqual(await instance.contractIsClosed(), false)
+
     })
 
     it("Retract unpaid contract buyer and intermediator", async () => {
@@ -35,9 +40,13 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
         // When 
         await instance.retractContract({from: buyer})
         await instance.retractContract({from: intermediator})
+        let agreement = await instance.agreement()
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
+        assert.strictEqual(agreement.buyerRetract, true)
+        assert.strictEqual(agreement.intermediatorRetract, true)
+        assert.strictEqual(await instance.contractIsClosed(), true)
     })
 
     it("Retract paid contract seller and intermediator", async () => {
@@ -48,9 +57,13 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
         // When 
         await instance.retractContract({from: seller})
         await instance.retractContract({from: intermediator})
+        let agreement = await instance.agreement()
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
+        assert.strictEqual(agreement.sellerRetract, true)
+        assert.strictEqual(agreement.intermediatorRetract, true)
+        assert.strictEqual(await instance.contractIsClosed(), false)
     })
 
     it("Retract unpaid contract seller and intermediator", async () => {
@@ -60,9 +73,13 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
         // When 
         await instance.retractContract({from: seller})
         await instance.retractContract({from: intermediator})
+        let agreement = await instance.agreement()
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
+        assert.strictEqual(agreement.sellerRetract, true)
+        assert.strictEqual(agreement.intermediatorRetract, true)
+        assert.strictEqual(await instance.contractIsClosed(), true)
     })
 
     it("Retract paid contract seller and buyer", async () => {
@@ -73,9 +90,13 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
         // When 
         await instance.retractContract({from: seller})
         await instance.retractContract({from: buyer})
+        let agreement = await instance.agreement()
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
+        assert.strictEqual(agreement.sellerRetract, true)
+        assert.strictEqual(agreement.buyerRetract, true)
+        assert.strictEqual(await instance.contractIsClosed(), false)
     })
 
     it("Retract unpaid contract seller and buyer", async () => {
@@ -85,9 +106,13 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
         // When 
         await instance.retractContract({from: seller})
         await instance.retractContract({from: buyer})
+        let agreement = await instance.agreement()
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
+        assert.strictEqual(agreement.sellerRetract, true)
+        assert.strictEqual(agreement.buyerRetract, true)
+        assert.strictEqual(await instance.contractIsClosed(), true)
     })
     
     it("Withdraw after retraction", async () => {
@@ -99,8 +124,6 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
         await instance.retractContract({from: buyer})
 
         // When 
-        
-
         let balanceBuyerBefore = new BigNumber(await web3.eth.getBalance(buyer))
         let hash = await instance.withdrawAfterRetraction({from: buyer})
         let balanceRaw = await web3.eth.getBalance(buyer)

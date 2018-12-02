@@ -9,7 +9,8 @@ contract Retraction is Owned {
         bool intermediatorRetract;
     }
     Agreement public agreement;
-    
+    bool public contractRetractedByRuling = false;
+
     event withdrawlFromRetraction(
         address buyer,
         uint price
@@ -19,6 +20,14 @@ contract Retraction is Owned {
         agreement.sellerRetract = false;
         agreement.buyerRetract = false; 
         agreement.intermediatorRetract = false;  
+    }
+
+    function disputeRuling() 
+        public
+        onlyBy(intermediator)
+        contractIntact()
+    {
+        contractRetractedByRuling = true;
     }
 
     function retractContract() 
@@ -36,6 +45,9 @@ contract Retraction is Owned {
         if((agreement.sellerRetract && agreement.buyerRetract) || 
             (agreement.sellerRetract && agreement.intermediatorRetract) ||
             (agreement.buyerRetract && agreement.intermediatorRetract)) {
+            if(address(this).balance == 0) {
+                contractIsClosed = true;
+            }
             contractRetracted = true;
         }
     }

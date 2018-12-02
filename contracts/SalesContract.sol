@@ -13,6 +13,7 @@ contract SalesContract is Retraction {
         address buyer,
         uint price
     );
+
     struct Item {
         string name;
         uint price;   
@@ -50,8 +51,7 @@ contract SalesContract is Retraction {
 
     function itemReceived() 
         public 
-        onlyBy(buyer) 
-        contractIntact() 
+        onlyBy(buyer)
         itemIsPaid() 
     {
         item.itemReceived = true;
@@ -61,7 +61,6 @@ contract SalesContract is Retraction {
         public 
         onlyBy(seller) 
         contractIntact() 
-        itemIsPaid() 
         itemIsReceived() 
     {
         contractIsClosed = true;
@@ -77,9 +76,17 @@ contract SalesContract is Retraction {
     {
         contractIsClosed = true;
         msg.sender.transfer(item.price);
-        emit withdrawlFromRetraction(msg.sender, item.price);
-        
+        emit withdrawlFromRetraction(msg.sender, item.price);   
     }
+
+// Todo: After ruling withdraw money (seller)
+    // function withdrawMoneyAfterRuling() 
+    //     public
+    //     onlyBy(seller)
+
+    // {
+
+    // }
 
     function getContractBalance() public view returns (uint) {
         return address(this).balance;
