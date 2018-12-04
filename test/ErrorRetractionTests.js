@@ -15,25 +15,25 @@ contract('Error test for contract retraction', async (accounts) => {
         price = web3.utils.toBN((web3.utils.toWei('1', 'ether')))
     })
 
-    it("Only one member retracts contact", async () => {    
-        // When
-        await instance.retractContract()
-        let agreement = await instance.agreement()
-
-        // Then
-        assert.strictEqual(agreement.sellerRetract, true)
-        assert.strictEqual(await instance.contractRetracted(), false)
-        
-        // Withdraw needs to fail
+/***********************************************************************************
+ retractContract test without permission
+/**********************************************************************************/
+   
+    it("Retracted contract without permission", async () => {
         try {
-            await instance.withdrawAfterRetraction({from:buyer})
-            assert.fail()           
+            // When
+            await instance.retractContract({from: randomGuy});
+            assert.fail()            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
         }
     })
 
+/***********************************************************************************
+ retractContract test while contract not intact
+/**********************************************************************************/
+   
     it("Contract is not intact anymore, but user wants to retract", async () => {    
         // Given
         await instance.setItem(book, price)
@@ -41,7 +41,44 @@ contract('Error test for contract retraction', async (accounts) => {
         await instance.itemReceived({from: buyer})
         await instance.withdraw({from: seller})
         try {
+            // When
             await instance.retractContract()
+            assert.fail()            
+        } catch (error) {
+            // Then
+            assert.ok(/revert/.test(error))
+        }
+    })
+
+/***********************************************************************************
+ retractContract test, attemp by third participant to also retract
+/**********************************************************************************/
+    
+    it("Contract is retracted, but seller wants to retract also", async () => {    
+        // Given
+        await instance.setItem(book, price)
+        await instance.payItem({value: price, from: buyer})
+        await instance.retractContract({from: buyer})
+        await instance.retractContract({from: intermediator})
+        try {
+            // When
+            await instance.retractContract({from: seller})
+            assert.fail()            
+        } catch (error) {
+            // Then
+            assert.ok(/revert/.test(error))
+        }
+    })
+
+    it("Contract is retracted, but buyer wants to retract also", async () => {    
+        // Given
+        await instance.setItem(book, price)
+        await instance.payItem({value: price, from: buyer})
+        await instance.retractContract({from: seller})
+        await instance.retractContract({from: intermediator})
+        try {
+            // When
+            await instance.retractContract({from: buyer})
             assert.fail()            
         } catch (error) {
             // Then

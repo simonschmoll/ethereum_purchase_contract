@@ -15,6 +15,25 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
         price = web3.utils.toBN((web3.utils.toWei('1', 'ether')))
     })
 
+/***********************************************************************************
+ agreement struct correctly initialized test
+/**********************************************************************************/
+
+it("Agreement struct is correctly initialized", async () => {
+    // Given
+    let agreement = await instance.agreement()
+
+    //Assert
+    assert.strictEqual(agreement.sellerRetract, false)
+    assert.strictEqual(agreement.buyerRetract, false)
+    assert.strictEqual(agreement.intermediatorRetract, false)
+})
+
+/***********************************************************************************
+ retractContract() test (buyer and intermediator)
+/**********************************************************************************/
+   
+
     it("Retract paid contract buyer and intermediator", async () => {
         // Given 
         await instance.setItem(book, price)
@@ -27,6 +46,7 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
+        assert.strictEqual(agreement.sellerRetract, false)
         assert.strictEqual(agreement.buyerRetract, true)
         assert.strictEqual(agreement.intermediatorRetract, true)
         assert.strictEqual(await instance.contractIsClosed(), false)
@@ -44,11 +64,16 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
+        assert.strictEqual(agreement.sellerRetract, false)
         assert.strictEqual(agreement.buyerRetract, true)
         assert.strictEqual(agreement.intermediatorRetract, true)
         assert.strictEqual(await instance.contractIsClosed(), true)
     })
 
+/***********************************************************************************
+ retractContract() test (seller and intermediator)
+/**********************************************************************************/
+  
     it("Retract paid contract seller and intermediator", async () => {
         // Given 
         await instance.setItem(book, price)
@@ -61,6 +86,7 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
+        assert.strictEqual(agreement.buyerRetract, false)
         assert.strictEqual(agreement.sellerRetract, true)
         assert.strictEqual(agreement.intermediatorRetract, true)
         assert.strictEqual(await instance.contractIsClosed(), false)
@@ -77,11 +103,16 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
+        assert.strictEqual(agreement.buyerRetract, false)
         assert.strictEqual(agreement.sellerRetract, true)
         assert.strictEqual(agreement.intermediatorRetract, true)
         assert.strictEqual(await instance.contractIsClosed(), true)
     })
 
+/***********************************************************************************
+ retractContract() test (seller and buyer)
+/**********************************************************************************/
+  
     it("Retract paid contract seller and buyer", async () => {
         // Given 
         await instance.setItem(book, price)
@@ -94,6 +125,7 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
+        assert.strictEqual(agreement.intermediatorRetract, false)
         assert.strictEqual(agreement.sellerRetract, true)
         assert.strictEqual(agreement.buyerRetract, true)
         assert.strictEqual(await instance.contractIsClosed(), false)
@@ -110,39 +142,9 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true)
+        assert.strictEqual(agreement.intermediatorRetract, false)
         assert.strictEqual(agreement.sellerRetract, true)
         assert.strictEqual(agreement.buyerRetract, true)
-        assert.strictEqual(await instance.contractIsClosed(), true)
-    })
-    
-    it("Withdraw after retraction", async () => {
-        // Given 
-        await instance.setItem(book, price)
-        await instance.payItem({value: price, from: buyer})
-        let balanceContractBefore = new BigNumber(await web3.eth.getBalance(instance.address))
-        await instance.retractContract({from: seller})
-        await instance.retractContract({from: buyer})
-
-        // When 
-        let balanceBuyerBefore = new BigNumber(await web3.eth.getBalance(buyer))
-        let hash = await instance.withdrawAfterRetraction({from: buyer})
-        let balanceRaw = await web3.eth.getBalance(buyer)
-        let expectedBalanceBuyerAfter = new BigNumber(balanceRaw)
-        let tx = hash["tx"]
-        let transactionReceipt = await web3.eth.getTransactionReceipt(tx)
-        let gasUsed = transactionReceipt.gasUsed
-        let transaction = await web3.eth.getTransaction(tx);
-        let gasPrice = transaction.gasPrice
-        let gasCost = new BigNumber(gasPrice * gasUsed)
-        let actualAfterBalanceBuyer = balanceBuyerBefore.minus(gasCost).plus(price)
-
-        // Then
-        // Should not be necessary? Normally web3 returns bigNumber
-        let balanceContractAfter = new BigNumber(await web3.eth.getBalance(instance.address))
-            
-        assert.strictEqual(actualAfterBalanceBuyer.toString(), expectedBalanceBuyerAfter.toString())
-        assert.strictEqual(balanceContractBefore.toString(), price.toString())
-        assert.strictEqual(balanceContractAfter.toString(), '0')
         assert.strictEqual(await instance.contractIsClosed(), true)
     })
 })

@@ -2,17 +2,16 @@ pragma solidity ^0.5;
 import "./Owned.sol";
 
 contract Retraction is Owned {
-    bool public contractRetracted = false;
     struct Agreement {
         bool sellerRetract;
         bool buyerRetract;
         bool intermediatorRetract;
     }
+    bool public buyerIsPaidBack;
     Agreement public agreement;
-    bool public contractRetractedByRuling = false;
 
-    event withdrawlFromRetraction(
-        address buyer,
+    event WithdrawalFromRetraction(
+        address retractor,
         uint price
     );  
     
@@ -22,17 +21,10 @@ contract Retraction is Owned {
         agreement.intermediatorRetract = false;  
     }
 
-    function disputeRuling() 
-        public
-        onlyBy(intermediator)
-        contractIntact()
-    {
-        contractRetractedByRuling = true;
-    }
-
     function retractContract() 
         public 
-        onlyMemberOfContract() 
+        onlyMemberOfContract()
+        contractIsRetracted(false)
         contractIntact()
     {
         if(msg.sender == seller) {
@@ -47,15 +39,19 @@ contract Retraction is Owned {
             (agreement.buyerRetract && agreement.intermediatorRetract)) {
             if(address(this).balance == 0) {
                 contractIsClosed = true;
+            } else {
+                buyerIsPaidBack = !(agreement.sellerRetract && agreement.intermediatorRetract);
             }
             contractRetracted = true;
         }
     }
 
-    modifier contractIsRetracted() {
+    modifier buyerIsRuledRight(bool ruling) {
         require(
-            contractRetracted == true, 
-            "Contract is not retracted"
+            buyerIsPaidBack == ruling,
+            ruling ? 
+            "Buyer can not withdraw money" : 
+            "Seller can not withdraw money"
         );
         _;
     }

@@ -10,6 +10,10 @@ contract('Successful Tests for owned functionality', async (accounts) => {
         instance = await SalesContract.new(buyer, intermediator)
     })
 
+/***********************************************************************************
+ disown() tests
+/**********************************************************************************/
+ 
     it("Disown seller", async () => {
         // When
         await instance.disown()
@@ -17,7 +21,11 @@ contract('Successful Tests for owned functionality', async (accounts) => {
         // Then
         assert.strictEqual(await instance.seller(), defaultAddress)
     })
-    
+
+/***********************************************************************************
+ changeSeller() tests
+/**********************************************************************************/
+   
     it("Change seller", async () => {
         // When
         await instance.changeSeller(accounts[4], {from: seller})

@@ -8,7 +8,7 @@ contract SalesContract is Retraction {
         address buyer,
         uint price
     );
-    event contractIsSettled(
+    event ContractIsSettled(
         address seller,
         address buyer,
         uint price
@@ -44,7 +44,8 @@ contract SalesContract is Retraction {
         payable 
         onlyBy(buyer) 
         contractIntact() 
-        paymentEqualPrice() {
+        paymentEqualPrice() 
+    {
         item.itemPaid = true;
         emit PaidItem(seller, msg.sender, msg.value);
     }
@@ -60,33 +61,39 @@ contract SalesContract is Retraction {
     function withdraw() 
         public 
         onlyBy(seller) 
-        contractIntact() 
         itemIsReceived() 
+        contractIntact()
+        contractIsRetracted(false) 
     {
         contractIsClosed = true;
         msg.sender.transfer(item.price);
-        emit contractIsSettled(msg.sender, buyer, item.price);
+        emit ContractIsSettled(msg.sender, buyer, item.price);
     }
 
-    function withdrawAfterRetraction() 
+    function withdrawAfterRetractionByBuyer() 
         public
         onlyBy(buyer) 
-        contractIsRetracted() 
-        contractIntact()
+        contractIsRetracted(true) 
+        buyerIsRuledRight(true)
     {
+        assert(contractIsClosed == false);
+        assert(address(this).balance == item.price);
         contractIsClosed = true;
         msg.sender.transfer(item.price);
-        emit withdrawlFromRetraction(msg.sender, item.price);   
+        emit WithdrawalFromRetraction(msg.sender, item.price);   
     }
 
-// Todo: After ruling withdraw money (seller)
-    // function withdrawMoneyAfterRuling() 
-    //     public
-    //     onlyBy(seller)
-
-    // {
-
-    // }
+    function withdrawAfterRetractionBySeller() 
+        public
+        onlyBy(seller) 
+        contractIsRetracted(true) 
+        buyerIsRuledRight(false)
+    {
+        assert(address(this).balance == item.price);
+        contractIsClosed = true;
+        msg.sender.transfer(item.price);
+        emit WithdrawalFromRetraction(msg.sender, item.price);   
+    }
 
     function getContractBalance() public view returns (uint) {
         return address(this).balance;
