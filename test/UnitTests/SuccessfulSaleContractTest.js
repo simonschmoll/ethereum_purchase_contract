@@ -58,12 +58,14 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         // When
         await instance.setItem(book, price);
         let item = await instance.item()
-        
+        let itemSet = await instance.itemIsSet()
+
         // Then
         assert.strictEqual(item.name, book);
         assert.strictEqual(item.price.toString(), price.toString())
         assert.strictEqual(item.itemPaid, false)
         assert.strictEqual(item.itemReceived, false)
+        assert.strictEqual(itemSet, true)
     })
 
 /***********************************************************************************

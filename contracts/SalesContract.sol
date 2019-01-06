@@ -23,6 +23,8 @@ contract SalesContract is Retraction {
     }
     Item public item;
 
+    bool public itemIsSet = false;
+
     /**
      * Constructor
      * Sets the intermediator and the buyer
@@ -121,11 +123,13 @@ contract SalesContract is Retraction {
     function setItem(string memory _name, uint _price) 
         public 
         onlyBy(seller) 
+        itemIsNotSet()
     {
         item.name = _name;
         item.price = _price;
         item.itemPaid = false;
         item.itemReceived = false;
+        itemIsSet = true;
     }
 
     /**
@@ -200,4 +204,17 @@ contract SalesContract is Retraction {
             );
         _;
     }
+
+    /**
+     * Modifier
+     * Check if value of msg sender is equal to price of item
+     */
+     modifier itemIsNotSet()
+     {
+        require(
+            itemIsSet == false, 
+            "Item can only be set once"
+            );
+        _;
+     }
 }

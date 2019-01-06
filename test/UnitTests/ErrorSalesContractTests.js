@@ -28,6 +28,19 @@ contract('Error test for sales contract', async (accounts) => {
             assert.ok(/revert/.test(error))
         }
     })
+    
+    it("Seller tries to set item twice", async () => {
+        await instance.setItem(book, price)
+        assert.strictEqual(await instance.itemIsSet(), true)
+        try {
+            // When
+            await instance.setItem(book, price)
+            assert.fail()
+        } catch (error) {
+            // Then
+            assert.ok(/revert/.test(error))
+        }
+    })
 
 /***********************************************************************************
  payItem tests
