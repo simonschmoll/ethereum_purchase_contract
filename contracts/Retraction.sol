@@ -1,4 +1,5 @@
-pragma solidity ^0.5;
+pragma solidity >=0.4.21 <0.6.0;
+pragma experimental ABIEncoderV2;
 import "./Owned.sol";
 
 contract Retraction is Owned {
@@ -15,12 +16,20 @@ contract Retraction is Owned {
         uint price
     );  
     
+    /**
+     * Constructor
+     * Sets the values of the agreement to zero
+     */
     constructor () public {
         agreement.sellerRetract = false;
         agreement.buyerRetract = false; 
         agreement.intermediatorRetract = false;  
     }
 
+    /**
+     * Retract Contract
+     * Modifier: only seller or buyer, contractRetracted == false, contractClosed == false
+     */
     function retractContract() 
         public 
         onlyMemberOfContract()
@@ -46,6 +55,34 @@ contract Retraction is Owned {
         }
     }
 
+    /**
+     * Getter
+     * returns { struct Agreement }
+     */
+    function getAgreement()
+        public 
+        view
+        returns (Agreement memory a)
+    {
+        return agreement;
+    }
+
+    /**
+     * Getter
+     * returns { boolean } if buyer is paid back
+     */
+    function getBuyerIsPaidBack()
+        public
+        view
+        returns (bool)
+    {
+        return buyerIsPaidBack;
+    }
+
+    /**
+     * Modifier
+     * Check if buyer is allowed to withdraw money
+     */
     modifier buyerIsRuledRight(bool ruling) {
         require(
             buyerIsPaidBack == ruling,

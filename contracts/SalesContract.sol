@@ -1,4 +1,5 @@
-pragma solidity ^0.5;
+pragma solidity >=0.4.21 <0.6.0;
+pragma experimental ABIEncoderV2;
 import "./Retraction.sol";
 
 contract SalesContract is Retraction {
@@ -22,6 +23,10 @@ contract SalesContract is Retraction {
     }
     Item public item;
 
+    /**
+     * Constructor
+     * Sets the intermediator and the buyer
+     */
     constructor(address payable _buyer, address _intermediator) 
         public 
     {
@@ -29,16 +34,10 @@ contract SalesContract is Retraction {
         intermediator = _intermediator;
     }
 
-    function setItem(string memory _name, uint _price) 
-        public 
-        onlyBy(seller) 
-    {
-        item.name = _name;
-        item.price = _price;
-        item.itemPaid = false;
-        item.itemReceived = false;
-    }
-    
+    /**
+     * Pay item
+     * Modifier: only buyer, contractIntact == true, msg.value == price
+     */
     function payItem() 
         public 
         payable 
@@ -50,6 +49,11 @@ contract SalesContract is Retraction {
         emit PaidItem(seller, msg.sender, msg.value);
     }
 
+    /**
+     * Item is received
+     * If item is received buyer can call this function
+     * Modifier: only buyer, itemPaid == true
+     */
     function itemReceived() 
         public 
         onlyBy(buyer)
@@ -58,6 +62,11 @@ contract SalesContract is Retraction {
         item.itemReceived = true;
     }
 
+    /**
+     * Withdraw
+     * Seller can withdraw money
+     * Modifier: only seller, itemReceived == true, contractIsClosed == true, contractRetracted == false
+     */
     function withdraw() 
         public 
         onlyBy(seller) 
@@ -70,6 +79,11 @@ contract SalesContract is Retraction {
         emit ContractIsSettled(msg.sender, buyer, item.price);
     }
 
+    /**
+     * Withdraw after retraction
+     * Buyer can withdraw money if contract is retracted and he is ruled right
+     * Modifier: only by buyer, contractRetracted == false, buyerIsPaidBack == true
+     */
     function withdrawAfterRetractionByBuyer() 
         public
         onlyBy(buyer) 
@@ -83,6 +97,11 @@ contract SalesContract is Retraction {
         emit WithdrawalFromRetraction(msg.sender, item.price);   
     }
 
+    /**
+     * Withdraw after retraction
+     * Seller can withdraw money if contract is retracted and he is ruled right
+     * Modifier: only by seller, contractRetracted == false, buyerIsPaidBack == false
+     */
     function withdrawAfterRetractionBySeller() 
         public
         onlyBy(seller) 
@@ -95,10 +114,58 @@ contract SalesContract is Retraction {
         emit WithdrawalFromRetraction(msg.sender, item.price);   
     }
 
+    /**
+     * Setter
+     * Sets the Item (name, price, default itemPaid, default itemReceived)
+     */
+    function setItem(string memory _name, uint _price) 
+        public 
+        onlyBy(seller) 
+    {
+        item.name = _name;
+        item.price = _price;
+        item.itemPaid = false;
+        item.itemReceived = false;
+    }
+
+    /**
+     * Getter
+     * Get the current Item
+     */
+    function getItem()
+        public
+        view
+        returns (Item memory i)
+    {
+        return item;
+    }
+
+    /**
+     * Getter
+     * Get Status if item is received
+     */
+    function getItemReceivedStatus()
+        public
+        view
+        returns (bool)
+    {
+        return item.itemReceived;
+    }
+
+    /**
+     * Getter
+     * Get Balance of contract
+     * Assertion: Balance must be null or price of item
+     */
     function getContractBalance() public view returns (uint) {
+        assert(address(this).balance == 0 || address(this).balance == item.price);
         return address(this).balance;
     }
 
+    /**
+     * Modifier
+     * Check if item is paid
+     */
     modifier itemIsPaid() 
     {
         require(
@@ -108,6 +175,10 @@ contract SalesContract is Retraction {
         _;
     }
 
+    /**
+     * Modifier
+     * Check if item is received
+     */
     modifier itemIsReceived() 
     {
         require(
@@ -117,6 +188,10 @@ contract SalesContract is Retraction {
         _;
     }
 
+    /**
+     * Modifier
+     * Check if value of msg sender is equal to price of item
+     */
     modifier paymentEqualPrice() 
     {
         require(
