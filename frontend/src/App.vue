@@ -20,7 +20,7 @@ export default {
   name: 'app',
   created() {
     console.log('Create web3 instance from SalesContract app');
-    this.$store.dispatch('registerWeb3');
+    this.$store.dispatch('loadInitialData');
   },
 };
 </script>
