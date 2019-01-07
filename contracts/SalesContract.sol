@@ -15,6 +15,11 @@ contract SalesContract is Retraction {
         uint price
     );
 
+    event SetItem(
+        string name,
+        uint price
+    );
+
     struct Item {
         string name;
         uint price;   
@@ -130,6 +135,7 @@ contract SalesContract is Retraction {
         item.itemPaid = false;
         item.itemReceived = false;
         itemIsSet = true;
+        // emit SetItem(_name, _price);
     }
 
     /**

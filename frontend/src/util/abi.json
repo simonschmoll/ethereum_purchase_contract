@@ -172,6 +172,20 @@
 	{
 		"constant": true,
 		"inputs": [],
+		"name": "itemIsSet",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
 		"name": "getContractClosed",
 		"outputs": [
 			{
