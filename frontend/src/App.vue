@@ -10,7 +10,8 @@
       </nav>
     </header>
     <main>
-      <router-view/>
+      <router-view v-if="contractInstance" name="default"/>
+      <router-view v-else name="deploy"/>
     </main>
   </div>
 </template>
@@ -21,6 +22,12 @@ export default {
   created() {
     console.log('Create web3 instance from SalesContract app');
     this.$store.dispatch('loadInitialData');
+  },
+  computed: {
+    contractInstance() {
+      console.log('Returning contractInstance', this.$store.state.contractInstance);
+      return this.$store.state.web3Module.contractInstance;
+    },
   },
 };
 </script>
@@ -59,5 +66,6 @@ ul {
   font-size: 24px;
   border-right: 2px solid #fff;
 }
+
 
 </style>

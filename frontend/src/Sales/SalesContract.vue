@@ -16,14 +16,32 @@
       <td>{{contract.seller}}</td>
       <td>{{contract.buyer}}</td>
       <td>{{contract.intermediator}}</td>
-      <td>{{getItemName}}</td>
-      <td>{{getItemPrice}}</td>
+      <td>{{getItem.name}}</td>
+      <td>{{getItem.price}}</td>
+    </tbody>
+  </table>
+  <table>
+    <thead>
+      <tr>
+        <th>Paid?</th>
+        <th>Received?</th>
+        <th>Closed?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <td v-if="getItem.itemPaid===false" style="background-color: #F66666">No</td>
+      <td v-else style="background-color: green">Yes</td>
+      <td v-if="getItem.itemReceived===false" style="background-color: #F66666">No</td>
+      <td v-else style="background-color: green">Yes</td>
+      <td v-if="getStatus===true" style="background-color: #F66666">Closed</td>
+      <td v-else style="background-color: green">Open</td>
+
     </tbody>
   </table>
   <hr>
   <div class="seller">
     <h1>Actions Seller:</h1>
-    <table>
+    <table class="inlineTable">
       <thead>
         <th>Set Item</th>
       </thead>
@@ -34,16 +52,32 @@
          </td>
       </tbody>
     </table>
+    <table class="inlineTable secondTable">
+        <td>
+          <button class="button buttonSubmit" @click="withdraw()">Withdraw</button>
+         </td>
+    </table>
   </div>
   <div class="seller">
     <h1>Actions Buyer:</h1>
-    <table>
+    <table class="inlineTable">
       <thead>
         <th>Received Item</th>
       </thead>
       <tbody>
         <td>
           <button class="button buttonReceive" @click="received()">Received Item</button>
+         </td>
+      </tbody>
+    </table>
+    <table class="inlineTable secondTable">
+      <thead>
+        <th>Pay Item</th>
+      </thead>
+      <tbody>
+        <td>
+          Price: <strong>{{getItem.price}}</strong> <br>
+          <button class="button buttonPay" @click="pay(getItem.price)">Pay Item</button>
          </td>
       </tbody>
     </table>
@@ -68,8 +102,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getItemName: 'getItemName',
-      getItemPrice: 'getItemPrice',
+      getItem: 'getItem',
+      getStatus: 'getStatus',
     }),
     web3() {
       console.log('Returning web 3 as', this.$store.state.web3Module.web3);
@@ -92,6 +126,14 @@ export default {
       console.log('received called from component');
       this.$store.dispatch('receivedItem');
     },
+    pay(price) {
+      console.log('User wants to pay item (SalesContract)');
+      this.$store.dispatch('pay', price);
+    },
+    withdraw() {
+      console.log('User wants to withdraw money');
+      this.$store.dispatch('withdraw');
+    },
   },
 };
 
@@ -100,6 +142,7 @@ export default {
 <style>
 table, th, td {
   border: 1px solid black;
+  border-collapse: collapse;
 }
 
 th, td {
@@ -107,11 +150,12 @@ th, td {
 }
 
 table {
-  margin-top: 50px;
+  margin: 5px;
+  margin-top: 30px;
 }
 
 h1 {
-    font-size: 20px;
+  font-size: 20px;
 }
 
 .seller {
@@ -153,11 +197,21 @@ button {
   display: inline-block;
 }
 
-.buttonReceive {
+.buttonReceive, .buttonPay {
   background-color: rgb(125, 180, 126)
 }
 
 .buttonSubmit {
   background-color: rgb(243, 147, 147)
 }
+
+.inlineTable {
+  display: inline-block;
+}
+
+.secondTable {
+  margin-left: 20%;
+}
+
+
 </style>

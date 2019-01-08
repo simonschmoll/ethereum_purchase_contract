@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import SalesContract from '../Sales/SalesContract.vue';
+import Deploy from '../Deploy/Deploy.vue';
 
 Vue.use(Router);
 
@@ -10,7 +11,10 @@ export default new Router({
     {
       path: '/',
       name: 'Sales',
-      component: SalesContract,
+      components: {
+        default: SalesContract,
+        deploy: Deploy,
+      },
     },
   //   {
   //     path: '/build',
