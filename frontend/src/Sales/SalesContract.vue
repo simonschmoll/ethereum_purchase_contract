@@ -1,92 +1,131 @@
 <template>
-<div>
-  <div class="SalesContract">
-      <p class="account">Contract Balance: {{contract.balance}}</p>
-  <table>
-    <thead>
-      <tr>
-        <th>Seller</th>
-        <th>Buyer</th>
-        <th>Intermediator</th>
-        <th>Itemname</th>
-        <th>Price</th>
-      </tr>
-    </thead>
-    <tbody>
-      <td>{{contract.seller}}</td>
-      <td>{{contract.buyer}}</td>
-      <td>{{contract.intermediator}}</td>
-      <td>{{getItem.name}}</td>
-      <td>{{getItem.price}}</td>
-    </tbody>
-  </table>
-  <table>
-    <thead>
-      <tr>
-        <th>Paid?</th>
-        <th>Received?</th>
-        <th>Closed?</th>
-      </tr>
-    </thead>
-    <tbody>
-      <td v-if="getItem.itemPaid===false" style="background-color: #F66666">No</td>
-      <td v-else style="background-color: green">Yes</td>
-      <td v-if="getItem.itemReceived===false" style="background-color: #F66666">No</td>
-      <td v-else style="background-color: green">Yes</td>
-      <td v-if="getStatus===true" style="background-color: #F66666">Closed</td>
-      <td v-else style="background-color: green">Open</td>
-
-    </tbody>
-  </table>
-  <hr>
-  <div class="seller">
-    <h1>Actions Seller:</h1>
-    <table class="inlineTable">
-      <thead>
-        <th>Set Item</th>
-      </thead>
-      <tbody>
-        <td> Name: <input v-model="itemName" type="text" name="ItemName"><br>
-          Price: <input v-model="itemPrice" type="text" name="ItemPrice"><br>
-          <button class="button buttonSubmit" @click="sendItem()">Submit</button>
-         </td>
-      </tbody>
-    </table>
-    <table class="inlineTable secondTable">
-        <td>
-          <button class="button buttonSubmit" @click="withdraw()">Withdraw</button>
-         </td>
-    </table>
+  <div>
+    <div class="SalesContract">
+      <p class="account">Contract Balance: {{getBalance}}</p>
+      <h1>Overview:</h1>
+      <table>
+          <tr>
+            <th>Seller</th>
+            <th>Buyer</th>
+            <th>Intermediator</th>
+            <th>Itemname</th>
+            <th>Price</th>
+          </tr>
+        <tr>
+          <td>{{contract.seller}}</td>
+          <td>{{contract.buyer}}</td>
+          <td>{{contract.intermediator}}</td>
+          <td>{{getItem.name}}</td>
+          <td>{{getItem.price}}</td>
+        </tr>
+      </table>
+      <table>
+          <tr>
+            <th>Paid?</th>
+            <th>Received?</th>
+            <th>Closed?</th>
+          </tr>
+        <tr>
+          <td v-if="getItem.itemPaid===false" style="background-color: #F66666">No</td>
+          <td v-else style="background-color: green">Yes</td>
+          <td v-if="getItem.itemReceived===false" style="background-color: #F66666">No</td>
+          <td v-else style="background-color: green">Yes</td>
+          <td v-if="getStatus===false" style="background-color: #F66666">No</td>
+          <td v-else style="background-color: green">Yes</td>
+        </tr>
+      </table>
+      <table>
+          <caption><strong>Retraction Status</strong></caption>
+          <tr>
+            <th>Seller?</th>
+            <th>Buyer?</th>
+            <th>Intermediator?</th>
+          </tr>
+        <tr>
+          <td v-if="getAgreement.sellerRetract===true"
+            style="background-color: #F66666">Retracted!</td>
+          <td v-else style="background-color: green">Valid</td>
+          <td v-if="getAgreement.buyerRetract===true"
+            style="background-color: #F66666">Retracted!</td>
+          <td v-else style="background-color: green">Valid</td>
+          <td v-if="getAgreement.intermediatorRetract===true"
+            style="background-color: #F66666">Retracted!</td>
+          <td v-else style="background-color: green">Valid</td>
+        </tr>
+      </table>
+      <hr>
+      <div class="actions">
+        <h1>Actions Seller:</h1>
+        <table class="actionTable">
+          <tr>
+            <th class="thAction">Set Item</th>
+            <th class="thAction">Withdraw</th>
+            <th class="thAction">Retract</th>
+          </tr>
+          <tr>
+            <td class="tdAction">
+              <div class="input-container">
+                <label for="ItemName">Name:</label>
+                <input v-model="itemName" type="text" name="ItemName">
+              </div>
+              <div class="input-container">
+                <label for="ItemPrice">Price:</label>
+                <input v-model="itemPrice" type="text" name="ItemPrice">
+              </div>
+              <button class="buttonSeller buttonSubmit" @click="sendItem()">Submit</button>
+            </td>
+            <td class="tdAction">
+              <button class="buttonSeller" @click="withdraw(getAgreement)">Withdraw</button>
+            </td>
+            <td class="tdAction">
+              <button class="buttonRetract" @click="retract()">Retract</button>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="actions">
+        <h1>Actions Buyer:</h1>
+        <table class="actionTable">
+          <tr>
+            <th class="thAction">Received Item</th>
+            <th class="thAction">Price: {{getItem.price}}</th>
+            <th class="thAction">Retract</th>
+            <th v-if="getBuyerIsPaidBack" class="thAction">Withdraw after dispute</th>
+          </tr>
+          <tr>
+            <td class="tdAction">
+              <button class="buttonBuyer" @click="received()">Received Item</button>
+            </td>
+            <td class="tdAction">
+              <button class="buttonBuyer" @click="pay(getItem.price)">Pay Item</button>
+            </td>
+            <td class="tdAction">
+              <button class="buttonRetract" @click="retract()">Retract</button>
+            </td>
+            <td v-if="getBuyerIsPaidBack" class="tdAction">
+              <button class="buttonWithdrawDispute" @click="withdrawAfterDisputeBuyer()">Withdraw</button>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="actions">
+        <h1>Actions Intermediator:</h1>
+        <table class="actionTable">
+          <tr>
+            <th class="thAction">Retract</th>
+          </tr>
+          <tr>
+            <td class="tdAction">
+              <button class="buttonRetract" @click="retract()">Retract</button>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <footer>
+      <p>Your current account from Metamask: {{}}</p>
+    </footer>
   </div>
-  <div class="seller">
-    <h1>Actions Buyer:</h1>
-    <table class="inlineTable">
-      <thead>
-        <th>Received Item</th>
-      </thead>
-      <tbody>
-        <td>
-          <button class="button buttonReceive" @click="received()">Received Item</button>
-         </td>
-      </tbody>
-    </table>
-    <table class="inlineTable secondTable">
-      <thead>
-        <th>Pay Item</th>
-      </thead>
-      <tbody>
-        <td>
-          Price: <strong>{{getItem.price}}</strong> <br>
-          <button class="button buttonPay" @click="pay(getItem.price)">Pay Item</button>
-         </td>
-      </tbody>
-    </table>
-  </div>
-  </div>
-  <footer>
-    <p>Your current account from Metamask: {{web3.currentAccount}}</p>
-  </footer>
-</div>
 </template>
 
 <script>
@@ -104,13 +143,15 @@ export default {
     ...mapGetters({
       getItem: 'getItem',
       getStatus: 'getStatus',
+      getAgreement: 'getAgreement',
+      getBuyerIsPaidBack: 'getBuyerIsPaidBack',
+      getBalance: 'getBalance',
     }),
-    web3() {
-      console.log('Returning web 3 as', this.$store.state.web3Module.web3);
-      return this.$store.state.web3Module.web3;
-    },
     contract() {
-      console.log('Returning contract instance', this.$store.state.web3Module.contractState);
+      console.log(
+        'Returning contract instance',
+        this.$store.state.web3Module.contractState,
+      );
       return this.$store.state.web3Module.contractState;
     },
   },
@@ -130,35 +171,49 @@ export default {
       console.log('User wants to pay item (SalesContract)');
       this.$store.dispatch('pay', price);
     },
-    withdraw() {
-      console.log('User wants to withdraw money');
-      this.$store.dispatch('withdraw');
+    withdraw(agreement) {
+      console.log('Seller wants to withdraw money');
+      if (agreement.sellerRetract && (agreement.buyerRetract || agreement.intermediatorRetract)) {
+        this.$store.dispatch('withdrawAfterDisputeSeller');
+      } else {
+        this.$store.dispatch('withdraw');
+      }
+    },
+    withdrawAfterDisputeBuyer() {
+      console.log('Buyer wants to withdraw money after dispute');
+      this.$store.dispatch('withdrawAfterDisputeBuyer');
+    },
+    retract() {
+      console.log('User wants to retract (SalesContract)');
+      this.$store.dispatch('retract');
     },
   },
 };
-
 </script>
 
 <style>
-table, th, td {
+table,
+th,
+td {
   border: 1px solid black;
   border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   padding: 10px;
 }
 
 table {
-  margin: 5px;
-  margin-top: 30px;
+  margin: 20px;
 }
 
 h1 {
   font-size: 20px;
+  margin: 20px;
 }
 
-.seller {
+.actions {
   margin-top: 30px;
   width: 100%;
   border: 1px solid black;
@@ -166,7 +221,6 @@ h1 {
 }
 
 footer {
-  position: fixed;
   width: 100%;
   bottom: 10px;
   text-align: center;
@@ -180,38 +234,59 @@ hr {
 }
 
 input {
-  background-color: whitesmoke;
+  background-color: #E2DFDF;
 }
 
-input[type=text]:focus {
-  background-color: lightgrey;
+label {
+  margin-right: 5px;
 }
 
 button {
   color: white;
-  padding: 15px 32px;
+  padding: 15px 30px;
   text-align: center;
-  margin-top: 5px;
-  position: center;
+  margin: auto;
+  display:flex;
   cursor: pointer;
-  display: inline-block;
 }
 
-.buttonReceive, .buttonPay {
-  background-color: rgb(125, 180, 126)
+.input-container {
+  display: table-row;
+}
+.input-container * {
+  display: table-cell;
+  margin-left: 5px;
+}
+
+.buttonWithdrawDispute,
+.buttonSeller,
+.buttonBuyer {
+  background-color: rgb(125, 180, 126);
+}
+
+.buttonRetract
+{
+  background-color: rgb(243, 147, 147);
 }
 
 .buttonSubmit {
-  background-color: rgb(243, 147, 147)
+  margin-top: 10px;
 }
 
-.inlineTable {
-  display: inline-block;
+.tdAction,
+.thAction {
+  width: 200px;
 }
 
-.secondTable {
-  margin-left: 20%;
+.tdAction {
+  height: 100px;
 }
 
-
+.account {
+  margin: 20px;
+}
+/* .actionTable {
+  width: 400px;
+  height: 200px;
+} */
 </style>

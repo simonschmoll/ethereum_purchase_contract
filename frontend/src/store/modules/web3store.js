@@ -2,21 +2,20 @@ import web3util from '../../util/web3Util';
 
 export default {
   state: {
-    web3: {
-      isInjected: false,
-      web3Instance: null,
-      networkId: null,
-      currentAccount: null,
-      accounts: null,
-      error: null,
-    },
     contractInstance: null,
     contractState: {
+      retracted: false,
+      agreement: {
+        sellerRetract: false,
+        buyerRetract: false,
+        intermediatorRetract: false,
+      },
       balance: null,
       seller: null,
       buyer: null,
       intermediator: null,
       contractClosed: false,
+      buyerIsPaidBack: false,
       item: {
         name: '',
         price: 0,
@@ -29,23 +28,29 @@ export default {
   actions: {
     async loadInitialData({ state, commit }) {
       console.log('Loading InitialData');
-      // if (!state.web3.accounts) {
-      //   web3util.getAccount().then((accounts) => {
-      //     console.log('Account in action loadinitialData', accounts);
-      //     commit('setCurrentAccount', accounts);
-      //   });
-      // }
       let contractInstanceLocal = state.contractInstance;
 
       // TODO: just for testing, connect to existing contract
-      contractInstanceLocal = await web3util.loadExistingContract('0x9a8C75f92251F6c4159ea25C571efB4665D2b854');
+      contractInstanceLocal = await web3util.loadExistingContract('0x2313A1f6A8EF84b3320761aF1f8298B84229D09D');
       console.log('contract Instance in loadInitData action', contractInstanceLocal);
       state.contractInstance = contractInstanceLocal;
 
       if (contractInstanceLocal) {
-        commit('loadInitialData', await web3util.loadContractData(
+        console.log('Loading contract data (action) if condition (init)');
+        web3util.loadContractData(
           contractInstanceLocal, state.contractState,
-        ));
+        ).then((result) => { commit('loadInitialData', result); });
+        // commit('loadInitialData', await web3util.loadContractData(
+        //   contractInstanceLocal, state.contractState,
+        // ));
+      }
+    },
+    async loadContractData({ state, commit }) {
+      console.log('Loading contract data (action)');
+      if (state.contractInstance) {
+        console.log('Loading contract data (action) if condition');
+        web3util.loadContractData(state.contractInstance, state.contractState)
+          .then((result) => { commit('saveContractData', result); });
       }
     },
     async setItem({ state, commit }, { name, price }) {
@@ -55,7 +60,7 @@ export default {
           commit('setItem', { name, price });
         });
     },
-    receivedItem({ state, commit }) {
+    async receivedItem({ state, commit }) {
       web3util.itemReceived(state.contractInstance)
         .then(() => commit('receivedItem'));
     },
@@ -67,18 +72,44 @@ export default {
           dispatch('loadInitialData');
         });
     },
-    async pay({ commit, state }, price) {
+    async pay({ dispatch, state }, price) {
       web3util.payItem(state.contractInstance, price)
-        .then(() => commit('pay'));
+        .then(() => dispatch('loadBalance'));
+    },
+    async loadBalance({ commit, state }) {
+      web3util.getBalance(state.contractInstance)
+        .then((balance) => {
+          commit('pay');
+          commit('updateBalance', balance);
+        });
     },
     async withdraw({ commit, state }) {
       web3util.withdraw(state.contractInstance)
         .then(() => commit('withdraw'));
     },
+    async retract({ dispatch, state }) {
+      web3util.retractContract(state.contractInstance)
+        .then(() => dispatch('loadContractData'));
+    },
+    async withdrawAfterDisputeBuyer({ dispatch, state }) {
+      web3util.withdrawAfterDisputeBuyer(state.contractInstance)
+        .then(() => dispatch('loadContractData'));
+    },
+    async withdrawAfterDisputeSeller({ dispatch, state }) {
+      web3util.withdrawAfterDisputeSeller(state.contractInstance)
+        .then(() => dispatch('loadContractData'));
+    },
+    // async getAgreement({ commit, state }) {
+    //   web3util.getAgreement(state.contractInstance)
+    //     .then((result) => { commit('updateAgreement', result); });
+    // },
   },
   getters: {
     getItem: state => state.contractState.item,
     getStatus: state => state.contractState.contractClosed,
+    getAgreement: state => state.contractState.agreement,
+    getBuyerIsPaidBack: state => state.contractState.buyerIsPaidBack,
+    getBalance: state => state.contractState.balance,
   },
   mutations: {
     saveContract(state, payload) {
@@ -97,8 +128,12 @@ export default {
     },
     loadInitialData(state, payload) {
       state.contractState = payload;
-      state.web3.currentAccount = window.web3.eth.defaultAccount;
+      // state.web3.currentAccount = window.web3.eth.defaultAccount;
       console.log('Intial Contract State: ', payload);
+    },
+    saveContractData(state, payload) {
+      console.log('Saving contract Data (mutation)');
+      state.contractState = payload;
     },
     pay(state) {
       state.contractState.item = Object.assign({}, state.contractState.item, { itemPaid: true });
@@ -109,5 +144,13 @@ export default {
       state.contractState.contractClosed = true;
       console.log('ContractStatus', state.contractClosed);
     },
+    updateBalance(state, payload) {
+      console.log('Updating Balance:', payload);
+      state.contractState.balance = payload;
+    },
+    // updateAgreement(state, payload) {
+    //   console.log(`Contract retracted by ${payload} retracted!`);
+    //   state.contractState.agreement = Object.assign({}, payload);
+    // },
   },
 };

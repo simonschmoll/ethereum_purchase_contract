@@ -51,7 +51,7 @@ contract Owned {
      * Getter
      * returns { boolean } if contract is closed
      */
-    function getContractClosed() 
+    function getIsContractClosed() 
         public
         view
         returns (bool)
