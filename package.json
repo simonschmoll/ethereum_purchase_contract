@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "install": "cd frontend && npm install",
+    "install": "truffle compile && cd frontend && npm install",
     "start": "cd frontend && npm run serve",
     "build": "cd frontend && npm build",
     "lint": "vue-cli-service lint"
