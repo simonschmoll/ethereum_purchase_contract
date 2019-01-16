@@ -42,6 +42,6 @@ To start the frontend please run
 now you can interact with the contract at http://localhost:8082/
 
 # Quick start
-(Pre condition: npm, ganache)
-`npm install`
+(Pre condition: npm, ganache)  
+`npm install`  
 `npm start`
