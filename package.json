@@ -9,7 +9,6 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "ganache-cli": "^6.2.5",
     "truffle": "^5.0.1"
   }
 }
