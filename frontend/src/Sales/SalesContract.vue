@@ -103,7 +103,8 @@
               <button class="buttonRetract" @click="retract()">Retract</button>
             </td>
             <td v-if="getBuyerIsPaidBack" class="tdAction">
-              <button class="buttonWithdrawDispute" @click="withdrawAfterDisputeBuyer()">Withdraw</button>
+              <button class="buttonWithdrawDispute"
+                @click="withdrawAfterDisputeBuyer()">Withdraw</button>
             </td>
           </tr>
         </table>

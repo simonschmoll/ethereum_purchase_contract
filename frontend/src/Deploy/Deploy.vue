@@ -10,7 +10,7 @@
           Address Buyer: <input v-model="addrBuyer" type="text" name="ItemPrice"><br>
           Address Intermediator:
           <input v-model="addrIntermediator" type="text" name="ItemPrice"><br>
-          <button class="button buttonSubmit" @click="deployContract()">Submit</button>
+          <button class="button buttonBuyer" @click="deployContract()">Submit</button>
          </td>
       </tbody>
     </table>
