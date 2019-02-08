@@ -169,7 +169,7 @@ contract('Error test for sales contract', async (accounts) => {
         }
     })
 
-    it("Buyer is ruled to be correct in disupute, but seller wants to withdraw money", async () => {    
+    it("Buyer is ruled to be correct in dispute, but seller wants to withdraw money", async () => {    
         // Given
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})

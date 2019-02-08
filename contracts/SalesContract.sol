@@ -49,7 +49,8 @@ contract SalesContract is Retraction {
         public 
         payable 
         onlyBy(buyer) 
-        contractIntact() 
+        contractIntact()
+        contractIsRetracted(false)  
         paymentEqualPrice() 
     {
         item.itemPaid = true;
