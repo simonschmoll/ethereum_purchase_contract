@@ -19,9 +19,25 @@
 <script>
 export default {
   name: 'app',
+  data() {
+    return {
+      polling: null,
+    };
+  },
   created() {
     console.log('Create web3 instance from SalesContract app');
     this.$store.dispatch('loadInitialData');
+    this.poll();
+  },
+  beforeDestroy() {
+    clearInterval(this.polling);
+  },
+  methods: {
+    poll() {
+      this.polling = setInterval(() => {
+        this.$store.dispatch('pollContract');
+      }, 3000);
+    },
   },
   computed: {
     contractInstance() {

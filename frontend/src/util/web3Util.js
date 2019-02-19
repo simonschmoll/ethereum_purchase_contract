@@ -18,8 +18,8 @@ async function deployContract(seller, buyer, intermediator) {
   console.log('Seller, Buyer, interm in web3util deploy:', seller, buyer, intermediator);
   return contract.deploy({
     data: bytecode.toString(),
-    arguments: ['0xbf8f723E3ceFB60760F4De122E1c38212BC9E6DE', '0xD8032D9C8691150d8bBB83B2AB8348feab23c0C3'],
-  }).send({ from: '0xa971e6cB801EC457840D6837B4796BCB0a0C55e3' });
+    arguments: [buyer, intermediator],
+  }).send({ from: window.web3.eth.defaultAccount });
 }
 
 async function loadExistingContract(address) {
@@ -47,7 +47,7 @@ async function loadContractData(contract, contractState) {
       .then((result) => { contractState.agreement = result; });
     await contract.methods.getBuyerIsPaidBack().call()
       .then((result) => { contractState.buyerIsPaidBack = result; });
-    console.log('web3util: Contract Instance is:', contractState);
+    // console.log('web3util: Contract Instance is:', contractState);
     resolve(contractState);
     reject(new Error('Could not load contract data'));
   });
