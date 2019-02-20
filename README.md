@@ -1,5 +1,14 @@
 # This is an example implementation of a sale contract between two parties
 
+**DISCLAIMER: This smart contract setup is not intended for production use, rather as an experimental setup 
+to facilitate the understanding of EOS and the underlying principles. DO NOT USE this code in production or deploy it 
+to the main network, as any EOS locked into the contract might be exposed to security risks. The code was not audited and 
+should only be used for educational purposes.**
+
+## Contract Functionality
+This example is intended to provide a sales contract between two parties which will be called seller and buyer from here on. Another actor is the intermediator which will be called upon resolution of a dispute. The seller is responsible for deploying the contract. He will provide the address of the buyer and intermediator. Next all parties can interact with the contract. The buyer can set an item which he wants to sell to the buyer. After setting the item the buyer can pay and after he received the item (in real life) he can mark it as received. However, the buyer can only withdraw the money after the buyer has marked the item as received. Now you may asked what happens if there is a dispute or the buyer just vanishes. Then there is the possibility that the intermediator (some judge or juristic institution) and the buyer can retract the contract, in which case the seller gets his money back. This works also the other way around, if the buyer is ruled correct and the seller tried to scam him, then the buyer and the intermediator can retract the contract. In which case the buyer can withdraw the money. 
+Of course this setup introduces problems such as a 2-1 plot against either the buyer or the seller. Thus, this concept requires a trusted third party. Furthermore, edge cases such as the refund for a damaged item and so on are not covered by the contract. However, it is impossible to consider every exception which might occur in real life. That's why smart contracts should be backed by a legal binding contract. Nonetheless, this scenario demonstrates a very convenient use case of smart contracts. The implementation should be viewed as educational and not production ready.
+
 ## Local setup
 
 ## NPM
@@ -35,11 +44,53 @@ To start the tests use:
 `truffle test` from the root directory or to run specific tests you can specify the location of a test after the command
 
 ## Start Frontend
+**Make sure Ganache is running**
+
 To start the frontend please run  
   
 `npm start`  
 
 now you can interact with the contract at http://localhost:8082/
+
+**Important**
+### MetaMask
+
+To interact with the contract you must use MetaMask as the web3 provider.
+Install MetaMask as a browser extension: https://metamask.io/
+Or use Brave which has also a MetaMask integration (and provides better privacy)
+
+Next create a wallet in MetaMask (open MetaMask and follow the instructions)
+
+Steps necessary: 
+- Open the MetaMask extension
+- Import three accounts from the current Ethereum instance
+  - Therefore open Ganache and copy the private key of an account
+  - In MetaMask click in the right corner and select 'Import Account'
+  - Paste the private key into the input field
+  - Repeat this instruction 2 more times
+- Now you should have imported 3 different accounts (in total there a now 4 accounts in MetaMask - with the default account included)
+
+Now you are ready to interact with the contract.  
+Go to http://localhost:8082/  
+The standard flow is as follows:
+- Insert the addresses of the 3 imported addresses into the 3 different fields 'seller', 'buyer', 'intermediator'
+- Select the account of the address of seller in MetaMask and press 'Deploy'. If you do not choose the seller the contract will not be instantiated, because only the owner of the address of 'seller' can deploy the contract
+
+**Hint: You can rename accounts in MetaMask, press the menu icon --> next the 'details' button --> now you can change the name on the top**
+- After pressing the button 'Deploy', these addresses will be associated with the respective sales position
+- Next a popup should be displayed where you have to accept the transaction, afterwards the contract is deployed on the local chain
+
+### Intended steps for interaction: 
+**Everytime you select a action, make sure the right account is selected in MetaMask**
+- Set Item (Seller)
+- Pay Item (Buyer)
+- Received Item (Buyer)
+- Withdraw (Seller)
+
+Other actions:
+- Retract (Seller, Buyer, Intermediator)
+- Withdraw (Buyer) - after dispute the buyer can withdraw the money if he is ruled right
+
 
 # Quick start
 (Pre condition: npm, ganache)  
