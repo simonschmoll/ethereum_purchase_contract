@@ -108,43 +108,4 @@ it("Agreement struct is correctly initialized", async () => {
         assert.strictEqual(agreement.intermediatorRetract, true)
         assert.strictEqual(await instance.contractIsClosed(), true)
     })
-
-/***********************************************************************************
- retractContract() test (seller and buyer)
-/**********************************************************************************/
-  
-    it("Retract paid contract seller and buyer", async () => {
-        // Given 
-        await instance.setItem(book, price)
-        await instance.payItem({value: price, from: buyer})
-
-        // When 
-        await instance.retractContract({from: seller})
-        await instance.retractContract({from: buyer})
-        let agreement = await instance.agreement()
-
-        // Then
-        assert.strictEqual(await instance.contractRetracted(), true)
-        assert.strictEqual(agreement.intermediatorRetract, false)
-        assert.strictEqual(agreement.sellerRetract, true)
-        assert.strictEqual(agreement.buyerRetract, true)
-        assert.strictEqual(await instance.contractIsClosed(), false)
-    })
-
-    it("Retract unpaid contract seller and buyer", async () => {
-        // Given 
-        await instance.setItem(book, price)
-
-        // When 
-        await instance.retractContract({from: seller})
-        await instance.retractContract({from: buyer})
-        let agreement = await instance.agreement()
-
-        // Then
-        assert.strictEqual(await instance.contractRetracted(), true)
-        assert.strictEqual(agreement.intermediatorRetract, false)
-        assert.strictEqual(agreement.sellerRetract, true)
-        assert.strictEqual(agreement.buyerRetract, true)
-        assert.strictEqual(await instance.contractIsClosed(), true)
-    })
 })

@@ -51,7 +51,7 @@ contract('Error test for contract retraction', async (accounts) => {
     })
 
 /***********************************************************************************
- retractContract test, attemp by third participant to also retract
+ retractContract test, attempt by third participant to also retract
 /**********************************************************************************/
     
     it("Contract is retracted, but seller wants to retract also", async () => {    
@@ -80,6 +80,39 @@ contract('Error test for contract retraction', async (accounts) => {
             // When
             await instance.retractContract({from: buyer})
             assert.fail()            
+        } catch (error) {
+            // Then
+            assert.ok(/revert/.test(error))
+        }
+    })
+
+/***********************************************************************************
+ retractContract test seller and buyer try both to retract while contract is intact
+/**********************************************************************************/
+    it("Buyer wants to retract after Seller has already retracted", async () => {    
+        // Given
+        await instance.setItem(book, price)
+        await instance.payItem({value: price, from: buyer})
+        await instance.retractContract({from: seller})
+        try {
+            // When
+            await instance.retractContract({from: buyer})
+            assert.fail()            
+        } catch (error) {
+            // Then
+            assert.ok(/revert/.test(error))
+        }
+    })
+
+    it("Seller wants to retract after Buyer has already retracted", async () => {    
+        // Given
+        await instance.setItem(book, price)
+        await instance.payItem({value: price, from: buyer})
+        await instance.retractContract({from: buyer})
+        try {
+            // When
+            await instance.retractContract({from: seller})
+            assert.fail("Test should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))

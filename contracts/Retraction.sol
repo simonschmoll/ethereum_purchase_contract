@@ -36,10 +36,10 @@ contract Retraction is Owned {
         contractIsRetracted(false)
         contractIntact()
     {
-        if(msg.sender == seller) {
+        if((msg.sender == seller) && (agreement.buyerRetract == false)) {
             agreement.sellerRetract = true;
-        } else if (msg.sender == buyer) {
-            agreement.buyerRetract = true;
+        } else if ((msg.sender == buyer) && (agreement.sellerRetract == false)) {
+            agreement.buyerRetract = true;     
         } else if(msg.sender == intermediator) {
             agreement.intermediatorRetract = true;
         } 
@@ -82,6 +82,20 @@ contract Retraction is Owned {
     /**
      * Modifier
      * Check if buyer is allowed to withdraw money
+     */
+    modifier buyerIsRuledRight(bool ruling) {
+        require(
+            buyerIsPaidBack == ruling,
+            ruling ? 
+            "Buyer can not withdraw money" : 
+            "Seller can not withdraw money"
+        );
+        _;
+    }
+
+    /**
+     * Modifier
+     * Check if buyer is 
      */
     modifier buyerIsRuledRight(bool ruling) {
         require(
