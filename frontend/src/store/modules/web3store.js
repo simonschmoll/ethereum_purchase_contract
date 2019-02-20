@@ -34,12 +34,12 @@ export default {
     },
     async loadInitialData({ state, commit }) {
       console.log('Loading InitialData');
-      // const contractInstanceLocal = state.contractInstance;
+      const contractInstanceLocal = state.contractInstance;
 
       // TODO: just for testing, connect to existing contract
-      const contractInstanceLocal = await web3util.loadExistingContract('0x5f0933Be41c8a427168065DdBdFc1325c71Fd79a');
+      // const contractInstanceLocal = await web3util.loadExistingContract('0x5a5499210FF0c12dE9E98E5996e7a459f71dd606');
       console.log('contract Instance in loadInitData action', contractInstanceLocal);
-      state.contractInstance = contractInstanceLocal;
+      // state.contractInstance = contractInstanceLocal;
 
       if (contractInstanceLocal) {
         console.log('Loading contract data (action) if condition (init)');
