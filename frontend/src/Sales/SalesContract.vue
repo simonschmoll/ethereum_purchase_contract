@@ -123,9 +123,6 @@
         </table>
       </div>
     </div>
-    <footer>
-      <p>Your current account from Metamask: {{}}</p>
-    </footer>
   </div>
 </template>
 

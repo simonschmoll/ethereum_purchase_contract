@@ -29,11 +29,16 @@ export default {
   },
   methods: {
     deployContract() {
-      const seller = this.addrSeller;
       const buyer = this.addrBuyer;
       const intermediator = this.addrIntermediator;
+      const seller = this.addrSeller;
       console.log('Sending deploy data to store: ', seller, buyer, intermediator);
       this.$store.dispatch('deploy', { seller, buyer, intermediator });
+    },
+  },
+  computed: {
+    getAddr() {
+      return this.$store.state.web3Module.web3Address;
     },
   },
 

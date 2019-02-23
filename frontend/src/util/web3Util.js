@@ -15,11 +15,12 @@ async function deployContract(seller, buyer, intermediator) {
   const contract = new getWeb3.eth.Contract(
     abi,
   );
-  console.log('Seller, Buyer, interm in web3util deploy:', seller, buyer, intermediator);
+  console.log('Seller, Buyer, Interm and window.default in web3util deploy:', seller, buyer, intermediator, window.web3.eth.defaultAccount);
+  console.log('Result of comparison', seller.toString() !== (window.web3.eth.defaultAccount).toString());
   return contract.deploy({
     data: bytecode.toString(),
     arguments: [buyer, intermediator],
-  }).send({ from: window.web3.eth.defaultAccount });
+  }).send({ from: seller });
 }
 
 async function loadExistingContract(address) {

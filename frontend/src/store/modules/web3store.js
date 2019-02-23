@@ -1,5 +1,6 @@
 import web3util from '../../util/web3Util';
 
+/* eslint-disable */
 export default {
   state: {
     contractInstance: null,
@@ -24,9 +25,11 @@ export default {
       },
     },
     web3Instance: null,
+    web3Address: null,
   },
   actions: {
     async pollContract({ state, commit }) {
+      state.web3Address = window.web3.eth.defaultAccount;
       if (state.contractInstance) {
         web3util.loadContractData(state.contractInstance, state.contractState)
           .then((result) => { commit('saveContractData', result); });
@@ -38,7 +41,7 @@ export default {
 
       // TODO: just for testing, connect to existing contract
       // const contractInstanceLocal = await
-      // web3util.loadExistingContract('0x5a5499210FF0c12dE9E98E5996e7a459f71dd606');
+      // web3util.loadExistingContract('0x675EcD9bbFC996026296cb2bb47e1B60c148A9e7');
       console.log('contract Instance in loadInitData action', contractInstanceLocal);
       // state.contractInstance = contractInstanceLocal;
 
@@ -46,7 +49,8 @@ export default {
         console.log('Loading contract data (action) if condition (init)');
         web3util.loadContractData(
           contractInstanceLocal, state.contractState,
-        ).then(result => commit('loadInitialData', result));
+        ).then(result => commit('loadInitialData', result))
+          .catch(error => window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache'));
       }
     },
     async loadContractData({ state, commit }) {
@@ -54,7 +58,8 @@ export default {
       if (state.contractInstance) {
         console.log('Loading contract data (action) if condition');
         web3util.loadContractData(state.contractInstance, state.contractState)
-          .then((result) => { commit('saveContractData', result); });
+          .then((result) => { commit('saveContractData', result); })
+          .catch(error => window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache'));
       }
     },
     async setItem({ state, commit }, { name, price }) {
@@ -62,11 +67,12 @@ export default {
       web3util.setItem(state.contractInstance, name, price)
         .then(() => {
           commit('setItem', { name, price });
-        });
+        }).catch(error => window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache'));
     },
     async receivedItem({ state, commit }) {
       web3util.itemReceived(state.contractInstance)
-        .then(() => commit('receivedItem'));
+        .then(() => commit('receivedItem'))
+        .catch(error => window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache'));
     },
     async deploy({ commit, dispatch }, { seller, buyer, intermediator }) {
       console.log('mutation deploy called in store', seller, buyer, intermediator);
@@ -74,34 +80,45 @@ export default {
         .then((instance) => {
           commit('saveContract', instance);
           dispatch('loadInitialData');
+        }).catch((error) => {
+          if (error.toString().includes('Invalid "from"')) {
+            window.alert('The specified address in field "Seller Address" must be the same as the selected MetaMask account. Only the seller can deploy the contract');
+          } else {
+            window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache')
+          }
         });
     },
     async pay({ dispatch, state }, price) {
       web3util.payItem(state.contractInstance, price)
-        .then(() => dispatch('loadBalance'));
+        .then(() => dispatch('loadBalance'))
+        .catch(error => window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache'));
     },
     async loadBalance({ commit, state }) {
       web3util.getBalance(state.contractInstance)
         .then((balance) => {
           commit('pay');
           commit('updateBalance', balance);
-        });
+        }).catch(error => window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache'));
     },
     async withdraw({ commit, state }) {
       web3util.withdraw(state.contractInstance)
-        .then(() => commit('withdraw'));
+        .then(() => commit('withdraw'))
+        .catch(error => window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache'));
     },
     async retract({ dispatch, state }) {
       web3util.retractContract(state.contractInstance)
-        .then(() => dispatch('loadContractData'));
+        .then(() => dispatch('loadContractData'))
+        .catch(error => window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache'));
     },
     async withdrawAfterDisputeBuyer({ dispatch, state }) {
       web3util.withdrawAfterDisputeBuyer(state.contractInstance)
-        .then(() => dispatch('loadContractData'));
+        .then(() => dispatch('loadContractData'))
+        .catch(error => window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache'));
     },
     async withdrawAfterDisputeSeller({ dispatch, state }) {
       web3util.withdrawAfterDisputeSeller(state.contractInstance)
-        .then(() => dispatch('loadContractData'));
+        .then(() => dispatch('loadContractData'))
+        .catch(error => window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache'));
     },
   },
   getters: {
