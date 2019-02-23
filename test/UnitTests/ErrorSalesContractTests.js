@@ -22,7 +22,7 @@ contract('Error test for sales contract', async (accounts) => {
         try {
             // When
             await instance.setItem(book, price, {from: buyer})
-            assert.fail()
+            assert.fail("setItem should fail")
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -35,7 +35,7 @@ contract('Error test for sales contract', async (accounts) => {
         try {
             // When
             await instance.setItem(book, price)
-            assert.fail()
+            assert.fail("setItem should fail")
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -53,7 +53,7 @@ contract('Error test for sales contract', async (accounts) => {
         try {
             // When
             await instance.payItem({value: price, from: seller})
-            assert.fail()            
+            assert.fail("payItem should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -70,7 +70,7 @@ contract('Error test for sales contract', async (accounts) => {
         try {
             // When
             await instance.payItem({value: price, from: buyer})
-            assert.fail()            
+            assert.fail("payItem should fail")
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -84,7 +84,7 @@ contract('Error test for sales contract', async (accounts) => {
         try {
             // When
             await instance.payItem({value: wrongPrice, from: buyer})
-            assert.fail()            
+            assert.fail("payItem should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -102,7 +102,7 @@ contract('Error test for sales contract', async (accounts) => {
         try {
             // When
             await instance.itemReceived({from: seller})
-            assert.fail()            
+            assert.fail("itemReceived should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -115,7 +115,7 @@ contract('Error test for sales contract', async (accounts) => {
         
         try {
             await instance.itemReceived({from: buyer})
-            assert.fail()            
+            assert.fail("itemReceived should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -134,7 +134,7 @@ contract('Error test for sales contract', async (accounts) => {
         try {
             // When
             await instance.withdraw({from: buyer});
-            assert.fail()           
+            assert.fail("withdraw should fail")           
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -147,7 +147,7 @@ contract('Error test for sales contract', async (accounts) => {
         await instance.payItem({value: price, from: buyer})
         try {
             await instance.withdraw({from: seller})
-            assert.fail()            
+            assert.fail("withdraw should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -162,7 +162,7 @@ contract('Error test for sales contract', async (accounts) => {
         await instance.withdraw({from: seller})
         try {
             await instance.withdraw({from: seller})
-            assert.fail()            
+            assert.fail("withdraw should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -177,7 +177,7 @@ contract('Error test for sales contract', async (accounts) => {
         await instance.retractContract({from: intermediator})
         try {
             await instance.withdraw({from: seller})
-            assert.fail()            
+            assert.fail("withdraw should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -195,7 +195,7 @@ contract('Error test for sales contract', async (accounts) => {
         try {
             // When
             await instance.withdrawAfterRetractionByBuyer({from: buyer})
-            assert.fail()            
+            assert.fail("withdrawAfterRetractionBuyer should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -214,7 +214,7 @@ contract('Error test for sales contract', async (accounts) => {
         // Withdraw needs to fail
         try {
             await instance.withdrawAfterRetractionByBuyer({from:buyer})
-            assert.fail()           
+            assert.fail("withdrawAfterRetractionByBuyer should fail")           
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -231,7 +231,7 @@ contract('Error test for sales contract', async (accounts) => {
         try {
             // When
             await instance.withdrawAfterRetractionByBuyer({from: seller})
-            assert.fail()            
+            assert.fail("withdrawAfterRetractionByBuyer should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -248,7 +248,7 @@ contract('Error test for sales contract', async (accounts) => {
         try {
             // When
             await instance.withdrawAfterRetractionByBuyer({from: buyer})
-            assert.fail()            
+            assert.fail("withdrawAfterRetractionByBuyer should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -266,7 +266,7 @@ contract('Error test for sales contract', async (accounts) => {
         try {
             // When
             await instance.withdrawAfterRetractionBySeller({from: seller})
-            assert.fail()            
+            assert.fail("withdrawAfterRetractionBySeller should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -283,7 +283,7 @@ contract('Error test for sales contract', async (accounts) => {
         try {
             // When
             await instance.withdrawAfterRetractionBySeller({from: buyer})
-            assert.fail()            
+            assert.fail("withdrawAfterRetractionBySeller should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -302,7 +302,7 @@ contract('Error test for sales contract', async (accounts) => {
         // Withdraw needs to fail
         try {
             await instance.withdrawAfterRetractionBySeller({from:seller})
-            assert.fail()           
+            assert.fail("withdrawAfterRetractionBySeller should fail")           
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -319,7 +319,7 @@ contract('Error test for sales contract', async (accounts) => {
         try {
             // When
             await instance.withdrawAfterRetractionByBuyer({from: seller})
-            assert.fail()            
+            assert.fail("withdrawAfterRetractionByBuyer should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))

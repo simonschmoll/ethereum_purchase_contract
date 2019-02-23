@@ -19,7 +19,7 @@ contract('Successful Tests for owned functionality', async (accounts) => {
         await instance.disown()
 
         // Then
-        assert.strictEqual(await instance.seller(), defaultAddress)
+        assert.strictEqual(await instance.seller(), defaultAddress, "Seller should have default address after disown")
     })
 
 /***********************************************************************************
@@ -31,6 +31,6 @@ contract('Successful Tests for owned functionality', async (accounts) => {
         await instance.changeSeller(accounts[4], {from: seller})
 
         // Then
-        assert.strictEqual(await instance.seller(), accounts[4])
+        assert.strictEqual(await instance.seller(), accounts[4], "Seller should have changed to the specified account")
     })
 })

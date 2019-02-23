@@ -23,7 +23,7 @@ contract('Error test for contract retraction', async (accounts) => {
         try {
             // When
             await instance.retractContract({from: randomGuy});
-            assert.fail()            
+            assert.fail("retractContract from randomGuy should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -43,7 +43,7 @@ contract('Error test for contract retraction', async (accounts) => {
         try {
             // When
             await instance.retractContract({ from: seller })
-            assert.fail()            
+            assert.fail("retractContract from seller should fail")            
         } catch (error) {
             // Then
             let agreement = await instance.agreement();
@@ -65,7 +65,7 @@ contract('Error test for contract retraction', async (accounts) => {
         try {
             // When
             await instance.retractContract({from: seller})
-            assert.fail()            
+            assert.fail("retractContract from seller should fail")            
         } catch (error) {
             // Then
             let agreement = await instance.agreement();
@@ -85,7 +85,7 @@ contract('Error test for contract retraction', async (accounts) => {
         try {
             // When
             await instance.retractContract({from: buyer})
-            assert.fail()            
+            assert.fail("retractContract from buyer should fail")            
         } catch (error) {
             // Then
             let agreement = await instance.agreement();
@@ -107,7 +107,7 @@ contract('Error test for contract retraction', async (accounts) => {
         try {
             // When
             await instance.retractContract({from: buyer})
-            assert.fail()            
+            assert.fail("retractContract from buyer should fail")
         } catch (error) {
             // Then
             let agreement = await instance.agreement();
@@ -125,7 +125,7 @@ contract('Error test for contract retraction', async (accounts) => {
         try {
             // When
             await instance.retractContract({from: seller})
-            assert.fail("Test should fail")            
+            assert.fail("retractContract from seller should fail")
         } catch (error) {
             // Then
             let agreement = await instance.agreement();

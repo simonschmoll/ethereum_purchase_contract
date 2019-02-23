@@ -20,7 +20,7 @@ contract('Error Tests for owned functionality', async (accounts) => {
         try {
             // When
             await instance.disown({from: buyer})
-            assert.fail()            
+            assert.fail("disown from buyer should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -37,7 +37,7 @@ contract('Error Tests for owned functionality', async (accounts) => {
         try {
             // When
             await instance.disown({from: seller})
-            assert.fail()            
+            assert.fail("disown from seller should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -52,7 +52,7 @@ contract('Error Tests for owned functionality', async (accounts) => {
         try {
             // When
             await instance.changeSeller(randomGuy, {from: buyer})
-            assert.fail()           
+            assert.fail("changeSeller from buyer should fail")           
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
@@ -69,7 +69,7 @@ contract('Error Tests for owned functionality', async (accounts) => {
         try {
             // When
             await instance.changeSeller(randomGuy, {from: seller})
-            assert.fail()            
+            assert.fail("changeSeller from seller should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))

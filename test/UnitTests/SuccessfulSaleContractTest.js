@@ -24,7 +24,7 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let buyer = await instance.buyer()
         
         // Assert
-        assert.strictEqual(buyer, buyer)
+        assert.strictEqual(buyer, buyer, "Initialized buyer should be specified buyer")
     })
 
 /***********************************************************************************
@@ -35,7 +35,7 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let intermediator = await instance.intermediator()
         
         // Assert
-        assert.strictEqual(intermediator, intermediator);
+        assert.strictEqual(intermediator, intermediator, "Initialized intermediator should be specified intermediator");
     })
 
 /***********************************************************************************
@@ -47,7 +47,7 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let seller = await instance.seller()
 
         // Assert
-        assert.strictEqual(seller, seller)
+        assert.strictEqual(seller, seller, "Initialized seller should be specified seller")
     })
 
 /***********************************************************************************
@@ -61,11 +61,11 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let itemSet = await instance.itemIsSet()
 
         // Then
-        assert.strictEqual(item.name, book);
-        assert.strictEqual(item.price.toString(), price.toString())
-        assert.strictEqual(item.itemPaid, false)
-        assert.strictEqual(item.itemReceived, false)
-        assert.strictEqual(itemSet, true)
+        assert.strictEqual(item.name, book, "Set book should be specified book");
+        assert.strictEqual(item.price.toString(), price.toString(), "Set price should be specified price")
+        assert.strictEqual(item.itemPaid, false, "itempaid should be false")
+        assert.strictEqual(item.itemReceived, false, "itemReceived should be false")
+        assert.strictEqual(itemSet, true, "itemSet should be true")
     })
 
 /***********************************************************************************
@@ -81,11 +81,11 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let item = await instance.item()
         
         // Assert
-        assert.strictEqual(item.itemPaid, true)
+        assert.strictEqual(item.itemPaid, true, "itemPaid should be true")
 
         // Assert that the contract now has the right balance
         let balance = new BigNumber(await web3.eth.getBalance(instance.address))
-        assert.strictEqual(balance.toString(), price.toString())
+        assert.strictEqual(balance.toString(), price.toString(), "Balance should b amount of price")
 
     })
 
@@ -103,7 +103,7 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let item = await instance.item()
         
         // Then
-        assert.strictEqual(item.itemReceived, true)
+        assert.strictEqual(item.itemReceived, true, "itemReceived should be true")
     })
 
 /***********************************************************************************
@@ -119,7 +119,7 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let balance = new BigNumber(await instance.getContractBalance())
         
         // Then
-        assert.strictEqual(balance.toString(), price.toString())
+        assert.strictEqual(balance.toString(), price.toString(), "Balance should be equal to price")
     })
 
 
@@ -152,10 +152,10 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let balanceContractAfter = new BigNumber(await web3.eth.getBalance(instance.address))
 
         //Then
-        assert.strictEqual(actualAfterBalanceSeller.toString(), expectedBalanceSellerAfter.toString())
-        assert.strictEqual(balanceContractBefore.toString(), price.toString())
-        assert.strictEqual(balanceContractAfter.toString(), '0')
-        assert.strictEqual(await instance.contractIsClosed(), true)
+        assert.strictEqual(actualAfterBalanceSeller.toString(), expectedBalanceSellerAfter.toString(), "Seller should have more money after deal (+ price)")
+        assert.strictEqual(balanceContractBefore.toString(), price.toString(), "Balance before withdraw should be equal to price")
+        assert.strictEqual(balanceContractAfter.toString(), '0', "Balance after should be 0")
+        assert.strictEqual(await instance.contractIsClosed(), true, "Contract should be closed")
 
     })
 
@@ -188,10 +188,10 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         // Should not be necessary? Normally web3 returns bigNumber
         let balanceContractAfter = new BigNumber(await web3.eth.getBalance(instance.address))
             
-        assert.strictEqual(actualAfterBalanceBuyer.toString(), expectedBalanceBuyerAfter.toString())
-        assert.strictEqual(balanceContractBefore.toString(), price.toString())
-        assert.strictEqual(balanceContractAfter.toString(), '0')
-        assert.strictEqual(await instance.contractIsClosed(), true)
+        assert.strictEqual(actualAfterBalanceBuyer.toString(), expectedBalanceBuyerAfter.toString(), "Buyer should have less money after deal (- price)")
+        assert.strictEqual(balanceContractBefore.toString(), price.toString(), "Balance before withdraw should be equal to price")
+        assert.strictEqual(balanceContractAfter.toString(), '0', "Balance after withdraw should be equal to 0")
+        assert.strictEqual(await instance.contractIsClosed(), true, "Contract should be closed")
     })
 
 /***********************************************************************************
@@ -224,10 +224,10 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let balanceContractAfter = new BigNumber(await web3.eth.getBalance(instance.address))
 
         //Then
-        assert.strictEqual(actualAfterBalanceSeller.toString(), expectedBalanceSellerAfter.toString())
-        assert.strictEqual(balanceContractBefore.toString(), price.toString())
-        assert.strictEqual(balanceContractAfter.toString(), '0')
-        assert.strictEqual(await instance.contractIsClosed(), true)
+        assert.strictEqual(actualAfterBalanceSeller.toString(), expectedBalanceSellerAfter.toString(), "Seller should have more money after deal (+ price)")
+        assert.strictEqual(balanceContractBefore.toString(), price.toString(), "Balance before withdraw should be equal to price")
+        assert.strictEqual(balanceContractAfter.toString(), '0', "Balance after should be 0")
+        assert.strictEqual(await instance.contractIsClosed(), true, "Contract should be closed")
     })
 
 /***********************************************************************************

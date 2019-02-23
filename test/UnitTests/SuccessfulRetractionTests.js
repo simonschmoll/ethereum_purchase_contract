@@ -24,9 +24,9 @@ it("Agreement struct is correctly initialized", async () => {
     let agreement = await instance.agreement()
 
     //Assert
-    assert.strictEqual(agreement.sellerRetract, false)
-    assert.strictEqual(agreement.buyerRetract, false)
-    assert.strictEqual(agreement.intermediatorRetract, false)
+    assert.strictEqual(agreement.sellerRetract, false, "Agreement fields (seller) should be set to false")
+    assert.strictEqual(agreement.buyerRetract, false, "Agreement fields (buyer) should be set to false")
+    assert.strictEqual(agreement.intermediatorRetract, false, "Agreement fields (intermediator) should be set to false")
 })
 
 /***********************************************************************************
@@ -45,11 +45,11 @@ it("Agreement struct is correctly initialized", async () => {
         let agreement = await instance.agreement()
 
         // Then
-        assert.strictEqual(await instance.contractRetracted(), true)
-        assert.strictEqual(agreement.sellerRetract, false)
-        assert.strictEqual(agreement.buyerRetract, true)
-        assert.strictEqual(agreement.intermediatorRetract, true)
-        assert.strictEqual(await instance.contractIsClosed(), false)
+        assert.strictEqual(await instance.contractRetracted(), true, "Contract should be retracted")
+        assert.strictEqual(agreement.sellerRetract, false, "sellerRetracted should be marked false")
+        assert.strictEqual(agreement.buyerRetract, true, "buyerRetract should be marked true")
+        assert.strictEqual(agreement.intermediatorRetract, true, "intermediatorRetract should be marked true")
+        assert.strictEqual(await instance.contractIsClosed(), false, "Contract should not be marked closed, as there is still money in the contract")
 
     })
 
@@ -63,11 +63,11 @@ it("Agreement struct is correctly initialized", async () => {
         let agreement = await instance.agreement()
 
         // Then
-        assert.strictEqual(await instance.contractRetracted(), true)
-        assert.strictEqual(agreement.sellerRetract, false)
-        assert.strictEqual(agreement.buyerRetract, true)
-        assert.strictEqual(agreement.intermediatorRetract, true)
-        assert.strictEqual(await instance.contractIsClosed(), true)
+        assert.strictEqual(await instance.contractRetracted(), true, "Contract should be retracted")
+        assert.strictEqual(agreement.sellerRetract, false, "sellerRetracted should be marked false")
+        assert.strictEqual(agreement.buyerRetract, true, "buyerRetract should be marked true")
+        assert.strictEqual(agreement.intermediatorRetract, true, "intermediatorRetract should be marked true")
+        assert.strictEqual(await instance.contractIsClosed(), true, "Contract should be marked closed, as there is no money in the contract")
     })
 
 /***********************************************************************************
@@ -85,11 +85,11 @@ it("Agreement struct is correctly initialized", async () => {
         let agreement = await instance.agreement()
 
         // Then
-        assert.strictEqual(await instance.contractRetracted(), true)
-        assert.strictEqual(agreement.buyerRetract, false)
-        assert.strictEqual(agreement.sellerRetract, true)
-        assert.strictEqual(agreement.intermediatorRetract, true)
-        assert.strictEqual(await instance.contractIsClosed(), false)
+        assert.strictEqual(await instance.contractRetracted(), true, "Contract should be retracted")
+        assert.strictEqual(agreement.buyerRetract, false, "buyerRetracted should be marked false")
+        assert.strictEqual(agreement.sellerRetract, true, "sellerRetracted should be marked true")
+        assert.strictEqual(agreement.intermediatorRetract, true, "intermediatorRetracted should be marked true")
+        assert.strictEqual(await instance.contractIsClosed(), false, "Contract should not be marked closed, as there is still money in the contract")
     })
 
     it("Retract unpaid contract seller and intermediator", async () => {
@@ -102,10 +102,10 @@ it("Agreement struct is correctly initialized", async () => {
         let agreement = await instance.agreement()
 
         // Then
-        assert.strictEqual(await instance.contractRetracted(), true)
-        assert.strictEqual(agreement.buyerRetract, false)
-        assert.strictEqual(agreement.sellerRetract, true)
-        assert.strictEqual(agreement.intermediatorRetract, true)
-        assert.strictEqual(await instance.contractIsClosed(), true)
+        assert.strictEqual(await instance.contractRetracted(), true, "Contract should be retracted")
+        assert.strictEqual(agreement.buyerRetract, false, "buyerRetracted should be marked false")
+        assert.strictEqual(agreement.sellerRetract, true, "sellerRetracted should be marked true")
+        assert.strictEqual(agreement.intermediatorRetract, true, "intermediatorRetracted should be marked true")
+        assert.strictEqual(await instance.contractIsClosed(), true, "Contract should be marked closed, as there is no money in the contract")
     })
 })
