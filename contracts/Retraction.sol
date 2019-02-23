@@ -92,18 +92,4 @@ contract Retraction is Owned {
         );
         _;
     }
-
-    /**
-     * Modifier
-     * Check if buyer is 
-     */
-    modifier buyerIsRuledRight(bool ruling) {
-        require(
-            buyerIsPaidBack == ruling,
-            ruling ? 
-            "Buyer can not withdraw money" : 
-            "Seller can not withdraw money"
-        );
-        _;
-    }
 }

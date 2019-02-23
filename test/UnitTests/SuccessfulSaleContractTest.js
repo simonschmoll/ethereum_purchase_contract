@@ -168,8 +168,8 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
         let balanceContractBefore = new BigNumber(await web3.eth.getBalance(instance.address))
-        await instance.retractContract({from: seller})
         await instance.retractContract({from: buyer})
+        await instance.retractContract({from: intermediator})
 
         // When 
         let balanceBuyerBefore = new BigNumber(await web3.eth.getBalance(buyer))
