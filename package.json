@@ -6,7 +6,8 @@
     "install": "truffle compile && cd frontend && npm install",
     "start": "cd frontend && npm run serve",
     "build": "cd frontend && npm build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test": "truffle test"
   },
   "dependencies": {
     "bignumber.js": "^8.0.2",
