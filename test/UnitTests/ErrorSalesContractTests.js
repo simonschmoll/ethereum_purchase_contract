@@ -126,7 +126,7 @@ contract('Error test for sales contract', async (accounts) => {
  withdraw tests
 /**********************************************************************************/
 
-    it("Money withdraw by other than seller", async () => {
+    it("Money withdraw by other than seller (normal flow)", async () => {
         // Given
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
@@ -273,7 +273,7 @@ contract('Error test for sales contract', async (accounts) => {
         }
     }) 
 
-    it("Other than buyer wants to withdraw after seller was ruled right in dispute", async () => {    
+    it("Buyer wants to withdraw after seller was ruled right in dispute", async () => {    
         // Given
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})

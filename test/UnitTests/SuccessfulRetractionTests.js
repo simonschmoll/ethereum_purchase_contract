@@ -15,23 +15,57 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
         price = web3.utils.toBN((web3.utils.toWei('1', 'ether')))
     })
 
-/***********************************************************************************
- agreement struct correctly initialized test
-/**********************************************************************************/
+    /***********************************************************************************
+     agreement struct correctly initialized test
+    /**********************************************************************************/
 
-it("Agreement struct is correctly initialized", async () => {
-    // Given
-    let agreement = await instance.agreement()
+    it("Agreement struct is correctly initialized", async () => {
+        // Given
+        let agreement = await instance.agreement()
 
-    //Assert
-    assert.strictEqual(agreement.sellerRetract, false, "Agreement fields (seller) should be set to false")
-    assert.strictEqual(agreement.buyerRetract, false, "Agreement fields (buyer) should be set to false")
-    assert.strictEqual(agreement.intermediatorRetract, false, "Agreement fields (intermediator) should be set to false")
-})
+        //Assert
+        assert.strictEqual(agreement.sellerRetract, false, "Agreement fields (seller) should be set to false")
+        assert.strictEqual(agreement.buyerRetract, false, "Agreement fields (buyer) should be set to false")
+        assert.strictEqual(agreement.intermediatorRetract, false, "Agreement fields (intermediator) should be set to false")
+    })
 
-/***********************************************************************************
- retractContract() test (buyer and intermediator)
-/**********************************************************************************/
+    /***********************************************************************************
+     retractContract() test single fields
+    /**********************************************************************************/
+
+    it("Retract contract seller", async () => {
+
+        // When 
+        await instance.retractContract({from: seller})
+        let agreement = await instance.agreement()
+
+        // Then
+        assert.strictEqual(agreement.sellerRetract, true, "sellerRetracted should be marked false")
+    })
+
+    it("Retract contract buyer", async () => {
+
+        // When 
+        await instance.retractContract({from: buyer})
+        let agreement = await instance.agreement()
+
+        // Then
+        assert.strictEqual(agreement.buyerRetract, true, "buyerRetract should be marked false")
+    })  
+
+    it("Retract contract intermediator", async () => {
+
+        // When 
+        await instance.retractContract({from: intermediator})
+        let agreement = await instance.agreement()
+
+        // Then
+        assert.strictEqual(agreement.intermediatorRetract, true, "intermediatorRetract should be marked false")
+    })
+
+    /***********************************************************************************
+     retractContract() test (buyer and intermediator)
+    /**********************************************************************************/
    
 
     it("Retract paid contract buyer and intermediator", async () => {
@@ -70,9 +104,9 @@ it("Agreement struct is correctly initialized", async () => {
         assert.strictEqual(await instance.contractIsClosed(), true, "Contract should be marked closed, as there is no money in the contract")
     })
 
-/***********************************************************************************
- retractContract() test (seller and intermediator)
-/**********************************************************************************/
+    /***********************************************************************************
+     retractContract() test (seller and intermediator)
+    /**********************************************************************************/
   
     it("Retract paid contract seller and intermediator", async () => {
         // Given 
