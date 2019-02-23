@@ -42,10 +42,12 @@ contract('Error test for contract retraction', async (accounts) => {
         await instance.withdraw({from: seller})
         try {
             // When
-            await instance.retractContract()
+            await instance.retractContract({ from: seller })
             assert.fail()            
         } catch (error) {
             // Then
+            let agreement = await instance.agreement();
+            assert.strictEqual(agreement.sellerRetract, false, "Seller should not be marked as retracted")
             assert.ok(/revert/.test(error))
         }
     })
@@ -66,6 +68,10 @@ contract('Error test for contract retraction', async (accounts) => {
             assert.fail()            
         } catch (error) {
             // Then
+            let agreement = await instance.agreement();
+            assert.strictEqual(agreement.buyerRetract, true, "Buyer should be marked as retracted")
+            assert.strictEqual(agreement.sellerRetract, false, "Seller should not be marked as retracted")
+            assert.strictEqual(agreement.intermediatorRetract, true, "Intermediator should be marked as retracted")
             assert.ok(/revert/.test(error))
         }
     })
@@ -82,6 +88,10 @@ contract('Error test for contract retraction', async (accounts) => {
             assert.fail()            
         } catch (error) {
             // Then
+            let agreement = await instance.agreement();
+            assert.strictEqual(agreement.buyerRetract, false, "Buyer should not be marked as retracted")
+            assert.strictEqual(agreement.sellerRetract, true, "Seller should be marked as retracted")
+            assert.strictEqual(agreement.intermediatorRetract, true, "Intermediator should be marked as retracted")
             assert.ok(/revert/.test(error))
         }
     })
@@ -100,6 +110,9 @@ contract('Error test for contract retraction', async (accounts) => {
             assert.fail()            
         } catch (error) {
             // Then
+            let agreement = await instance.agreement();
+            assert.strictEqual(agreement.buyerRetract, false, "Buyer should not be marked as retracted")
+            assert.strictEqual(agreement.sellerRetract, true, "Seller should be marked as retracted")
             assert.ok(/revert/.test(error))
         }
     })
@@ -115,6 +128,9 @@ contract('Error test for contract retraction', async (accounts) => {
             assert.fail("Test should fail")            
         } catch (error) {
             // Then
+            let agreement = await instance.agreement();
+            assert.strictEqual(agreement.buyerRetract, true, "Buyer should be marked as retracted")
+            assert.strictEqual(agreement.sellerRetract, false, "Seller should not be marked as retracted")
             assert.ok(/revert/.test(error))
         }
     })

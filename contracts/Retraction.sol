@@ -36,9 +36,11 @@ contract Retraction is Owned {
         contractIsRetracted(false)
         contractIntact()
     {
-        if((msg.sender == seller) && (agreement.buyerRetract == false)) {
+        if(msg.sender == seller) {
+            require(agreement.buyerRetract == false, "Buyer already retracted contract, wait for decision of intermediator");
             agreement.sellerRetract = true;
-        } else if ((msg.sender == buyer) && (agreement.sellerRetract == false)) {
+        } else if (msg.sender == buyer) {
+            require(agreement.sellerRetract == false, "Seller already retracted contract, wait for decision of intermediator");
             agreement.buyerRetract = true;     
         } else if(msg.sender == intermediator) {
             agreement.intermediatorRetract = true;
