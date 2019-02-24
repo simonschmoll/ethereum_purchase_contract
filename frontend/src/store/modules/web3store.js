@@ -37,13 +37,13 @@ export default {
     },
     async loadInitialData({ state, commit }) {
       console.log('Loading InitialData');
-      const contractInstanceLocal = state.contractInstance;
+      // const contractInstanceLocal = state.contractInstance;
 
       // TODO: just for testing, connect to existing contract
-      // const contractInstanceLocal = await
-      // web3util.loadExistingContract('0x675EcD9bbFC996026296cb2bb47e1B60c148A9e7');
+      const contractInstanceLocal = await
+      web3util.loadExistingContract('0xeE3c4b6276D2621086B7e19812e9A04b4D2f0F6e');
       console.log('contract Instance in loadInitData action', contractInstanceLocal);
-      // state.contractInstance = contractInstanceLocal;
+      state.contractInstance = contractInstanceLocal;
 
       if (contractInstanceLocal) {
         console.log('Loading contract data (action) if condition (init)');
@@ -109,6 +109,15 @@ export default {
       web3util.retractContract(state.contractInstance)
         .then(() => dispatch('loadContractData'))
         .catch(error => window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache'));
+    },
+    async finalizeRetraction({ dispatch, state }, buyerRuledRight) {
+      web3util.finalizeRetraction(state.contractInstance, buyerRuledRight)
+       .then(() => dispatch('loadContractData'))
+       .catch(error => {
+         console.log(error);
+         
+         window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache');
+       })
     },
     async withdrawAfterDisputeBuyer({ dispatch, state }) {
       web3util.withdrawAfterDisputeBuyer(state.contractInstance)

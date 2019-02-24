@@ -75,7 +75,7 @@
               <button class="buttonSeller buttonSubmit" @click="sendItem()">Submit</button>
             </td>
             <td class="tdAction">
-              <button class="buttonSeller" @click="withdraw(getAgreement)">Withdraw</button>
+              <button class="buttonSeller" @click="withdraw()">Withdraw</button>
             </td>
             <td class="tdAction">
               <button class="buttonRetract" @click="retract()">Retract</button>
@@ -104,7 +104,7 @@
             </td>
             <td v-if="getBuyerIsPaidBack" class="tdAction">
               <button class="buttonWithdrawDispute"
-                @click="withdrawAfterDisputeBuyer()">Withdraw</button>
+                @click="withdraw()">Withdraw</button>
             </td>
           </tr>
         </table>
@@ -113,11 +113,15 @@
         <h1>Actions Intermediator:</h1>
         <table class="actionTable">
           <tr>
-            <th class="thAction">Retract</th>
+            <th class="thAction">Retract in favor of seller</th>
+            <th class="thAction">Retract in favor of buyer</th>
           </tr>
           <tr>
             <td class="tdAction">
-              <button class="buttonRetract" @click="retract()">Retract</button>
+              <button class="buttonRetract" @click="finalizeRetraction(false)">Retract</button>
+            </td>
+            <td class="tdAction">
+              <button class="buttonRetract" @click="finalizeRetraction(true)">Retract</button>
             </td>
           </tr>
         </table>
@@ -169,17 +173,12 @@ export default {
       console.log('User wants to pay item (SalesContract)');
       this.$store.dispatch('pay', price);
     },
-    withdraw(agreement) {
-      console.log('Seller wants to withdraw money');
-      if (agreement.sellerRetract && (agreement.buyerRetract || agreement.intermediatorRetract)) {
-        this.$store.dispatch('withdrawAfterDisputeSeller');
-      } else {
-        this.$store.dispatch('withdraw');
-      }
+    withdraw() {
+      console.log('User wants to withdraw money');
+      this.$store.dispatch('withdraw');
     },
-    withdrawAfterDisputeBuyer() {
-      console.log('Buyer wants to withdraw money after dispute');
-      this.$store.dispatch('withdrawAfterDisputeBuyer');
+    finalizeRetraction(buyerRuledRight) {
+      this.$store.dispatch('finalizeRetraction', buyerRuledRight);
     },
     retract() {
       console.log('User wants to retract (SalesContract)');

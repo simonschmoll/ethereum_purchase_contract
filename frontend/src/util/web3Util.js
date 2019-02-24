@@ -77,21 +77,27 @@ async function withdraw(contractInstance) {
     .send({ from: window.web3.eth.defaultAccount });
 }
 
-async function withdrawAfterDisputeBuyer(contractInstance) {
-  console.log('Withdraw after dispute called in webutil by buyer');
-  return contractInstance.methods.withdrawAfterRetractionByBuyer()
-    .send({ from: window.web3.eth.defaultAccount });
-}
+// async function withdrawAfterDisputeBuyer(contractInstance) {
+//   console.log('Withdraw after dispute called in webutil by buyer');
+//   return contractInstance.methods.withdrawAfterRetractionByBuyer()
+//     .send({ from: window.web3.eth.defaultAccount });
+// }
 
-async function withdrawAfterDisputeSeller(contractInstance) {
-  console.log('Withdraw after dispute called in webutil by seller');
-  return contractInstance.methods.withdrawAfterRetractionBySeller()
-    .send({ from: window.web3.eth.defaultAccount });
-}
+// async function withdrawAfterDisputeSeller(contractInstance) {
+//   console.log('Withdraw after dispute called in webutil by seller');
+//   return contractInstance.methods.withdrawAfterRetractionBySeller()
+//     .send({ from: window.web3.eth.defaultAccount });
+// }
 
 async function retractContract(contractInstance) {
-  console.log('Withdraw called in webutil');
+  console.log('Retract called in webutil');
   return contractInstance.methods.retractContract()
+    .send({ from: window.web3.eth.defaultAccount });
+}
+
+async function finalizeRetraction(contractInstance, buyerRuledRight) {
+  console.log('Finalize Retraction called in webutil', buyerRuledRight);
+  return contractInstance.methods.finalizeRetraction(buyerRuledRight)
     .send({ from: window.web3.eth.defaultAccount });
 }
 
@@ -128,7 +134,8 @@ export default {
   withdraw,
   getAgreement,
   retractContract,
+  finalizeRetraction,
   getBalance,
-  withdrawAfterDisputeBuyer,
-  withdrawAfterDisputeSeller,
+  // withdrawAfterDisputeBuyer,
+  // withdrawAfterDisputeSeller,
 };
