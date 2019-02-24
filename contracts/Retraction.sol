@@ -22,8 +22,8 @@ contract Retraction is Owned {
      */
     constructor () public {
         agreement.sellerRetract = false;
-        agreement.buyerRetract = false; 
-        agreement.intermediatorRetract = false;  
+        agreement.buyerRetract = false;
+        agreement.intermediatorRetract = false;
     }
 
     /**
@@ -32,29 +32,35 @@ contract Retraction is Owned {
      */
     function retractContract() 
         public 
-        onlyMemberOfContract()
+        onlyBySellerOrBuyer()
         contractIsRetracted(false)
         contractIntact()
     {
         if(msg.sender == seller) {
-            require(agreement.buyerRetract == false, "Buyer already retracted contract, wait for decision of intermediator");
             agreement.sellerRetract = true;
         } else if (msg.sender == buyer) {
-            require(agreement.sellerRetract == false, "Seller already retracted contract, wait for decision of intermediator");
             agreement.buyerRetract = true;     
-        } else if(msg.sender == intermediator) {
-            agreement.intermediatorRetract = true;
         } 
-        if((agreement.sellerRetract && agreement.buyerRetract) || 
-            (agreement.sellerRetract && agreement.intermediatorRetract) ||
-            (agreement.buyerRetract && agreement.intermediatorRetract)) {
-            if(address(this).balance == 0) {
-                contractIsClosed = true;
-            } else {
-                buyerIsPaidBack = !(agreement.sellerRetract && agreement.intermediatorRetract);
-            }
-            contractRetracted = true;
+    }
+
+    /**
+     * Finalize Retraction
+     * Modifier: only intermediator, contractRetracted == false, contractClosed == false
+     */
+    function finalizeRetraction(bool buyerIsRight)
+        public
+        onlyBy(intermediator)
+        contractIsRetracted(false)
+        contractIntact()
+        markedAsRetracted()
+    {
+        agreement.intermediatorRetract = true;
+        if(address(this).balance == 0) {
+            contractIsClosed = true;
+        } else {
+            buyerIsPaidBack = buyerIsRight;
         }
+        contractRetracted = true;
     }
 
     /**
@@ -91,6 +97,18 @@ contract Retraction is Owned {
             ruling ? 
             "Buyer can not withdraw money" : 
             "Seller can not withdraw money"
+        );
+        _;
+    }
+
+    /**
+     * Modifier
+     * Check if intermediator is allowed to call finalizeRetraction
+     */
+    modifier markedAsRetracted() {
+        require(
+            agreement.sellerRetract || agreement.buyerRetract,
+            "Can only be called if either buyer or seller retract"
         );
         _;
     }

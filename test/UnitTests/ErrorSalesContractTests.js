@@ -174,7 +174,7 @@ contract('Error test for sales contract', async (accounts) => {
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
         await instance.retractContract({from: buyer})
-        await instance.retractContract({from: intermediator})
+        await instance.finalizeRetraction(true, {from: intermediator})
         try {
             await instance.withdraw({from: seller})
             assert.fail("withdraw should fail")            
@@ -184,145 +184,18 @@ contract('Error test for sales contract', async (accounts) => {
         }
     })
 
-/***********************************************************************************
- withdrawAfterRetractionByBuyer tests
-/**********************************************************************************/
-
-    it("Contract is not retracted and buyer wants to withdraw money", async () => {    
+    it("Seller is ruled to be correct in dispute, but buyer wants to withdraw money", async () => {    
         // Given
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
+        await instance.retractContract({from: seller})
+        await instance.finalizeRetraction(false, {from: intermediator})
         try {
-            // When
-            await instance.withdrawAfterRetractionByBuyer({from: buyer})
-            assert.fail("withdrawAfterRetractionBuyer should fail")            
-        } catch (error) {
-            // Then
-            assert.ok(/revert/.test(error))
-        }
-    }) 
-    
-    it("Only buyer retracts contact and buyer wants to withdraw", async () => {    
-        // When
-        await instance.retractContract({from: buyer})
-        let agreement = await instance.agreement()
-
-        // Then
-        assert.strictEqual(agreement.buyerRetract, true)
-        assert.strictEqual(await instance.contractRetracted(), false)
-        
-        // Withdraw needs to fail
-        try {
-            await instance.withdrawAfterRetractionByBuyer({from:buyer})
-            assert.fail("withdrawAfterRetractionByBuyer should fail")           
+            await instance.withdraw({from: buyer})
+            assert.fail("withdraw should fail")            
         } catch (error) {
             // Then
             assert.ok(/revert/.test(error))
         }
     })
-
-    it("Other than buyer wants to withdraw after buyer has been ruled right", async () => {    
-        // Given
-        await instance.setItem(book, price)
-        await instance.payItem({value: price, from: buyer})
-        await instance.retractContract({from: buyer})
-        await instance.retractContract({from: intermediator})
-
-        try {
-            // When
-            await instance.withdrawAfterRetractionByBuyer({from: seller})
-            assert.fail("withdrawAfterRetractionByBuyer should fail")            
-        } catch (error) {
-            // Then
-            assert.ok(/revert/.test(error))
-        }
-    }) 
-
-    it("Buyer is not ruled right and wants to withdraw the money", async () => {    
-        // Given
-        await instance.setItem(book, price)
-        await instance.payItem({value: price, from: buyer})
-        await instance.retractContract({from: seller})
-        await instance.retractContract({from: intermediator})
-
-        try {
-            // When
-            await instance.withdrawAfterRetractionByBuyer({from: buyer})
-            assert.fail("withdrawAfterRetractionByBuyer should fail")            
-        } catch (error) {
-            // Then
-            assert.ok(/revert/.test(error))
-        }
-    }) 
-
-/***********************************************************************************
- withdrawAfterRetractionBySeller tests
-/**********************************************************************************/
-
-    it("Contract is not retracted and seller wants to withdraw money", async () => {    
-        // Given
-        await instance.setItem(book, price)
-        await instance.payItem({value: price, from: buyer})
-        try {
-            // When
-            await instance.withdrawAfterRetractionBySeller({from: seller})
-            assert.fail("withdrawAfterRetractionBySeller should fail")            
-        } catch (error) {
-            // Then
-            assert.ok(/revert/.test(error))
-        }
-    }) 
-
-    it("Buyer wants to withdraw after seller was ruled right in dispute", async () => {    
-        // Given
-        await instance.setItem(book, price)
-        await instance.payItem({value: price, from: buyer})
-        await instance.retractContract({from: seller})
-        await instance.retractContract({from: intermediator})
-
-        try {
-            // When
-            await instance.withdrawAfterRetractionBySeller({from: buyer})
-            assert.fail("withdrawAfterRetractionBySeller should fail")            
-        } catch (error) {
-            // Then
-            assert.ok(/revert/.test(error))
-        }
-    }) 
-
-    it("Only seller retracts contact and seller wants to withdraw", async () => {    
-        // When
-        await instance.retractContract({from: seller})
-        let agreement = await instance.agreement()
-
-        // Then
-        assert.strictEqual(agreement.sellerRetract, true)
-        assert.strictEqual(await instance.contractRetracted(), false)
-        
-        // Withdraw needs to fail
-        try {
-            await instance.withdrawAfterRetractionBySeller({from:seller})
-            assert.fail("withdrawAfterRetractionBySeller should fail")           
-        } catch (error) {
-            // Then
-            assert.ok(/revert/.test(error))
-        }
-    })
-
-    it("Buyer is ruled right, but seller wants to withdraw the money", async () => {    
-        // Given
-        await instance.setItem(book, price)
-        await instance.payItem({value: price, from: buyer})
-        await instance.retractContract({from: buyer})
-        await instance.retractContract({from: intermediator})
-
-        try {
-            // When
-            await instance.withdrawAfterRetractionByBuyer({from: seller})
-            assert.fail("withdrawAfterRetractionByBuyer should fail")            
-        } catch (error) {
-            // Then
-            assert.ok(/revert/.test(error))
-        }
-    }) 
 })

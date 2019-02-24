@@ -15,9 +15,9 @@ contract('Error test for contract retraction', async (accounts) => {
         price = web3.utils.toBN((web3.utils.toWei('1', 'ether')))
     })
 
-/***********************************************************************************
- retractContract test without permission
-/**********************************************************************************/
+    /***********************************************************************************
+     retractContract test without permission
+    /**********************************************************************************/
    
     it("Retracted contract without permission", async () => {
         try {
@@ -30,9 +30,9 @@ contract('Error test for contract retraction', async (accounts) => {
         }
     })
 
-/***********************************************************************************
- retractContract test while contract not intact
-/**********************************************************************************/
+    /***********************************************************************************
+     retractContract test while contract not intact
+    /**********************************************************************************/
    
     it("Contract is not intact anymore, but user wants to retract", async () => {    
         // Given
@@ -52,16 +52,16 @@ contract('Error test for contract retraction', async (accounts) => {
         }
     })
 
-/***********************************************************************************
- retractContract test, attempt by third participant to also retract
-/**********************************************************************************/
+    /***********************************************************************************
+     retractContract test, attempt by third participant to also retract
+    /**********************************************************************************/
     
     it("Contract is retracted, but seller wants to retract also", async () => {    
         // Given
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
         await instance.retractContract({from: buyer})
-        await instance.retractContract({from: intermediator})
+        await instance.finalizeRetraction(true, {from: intermediator})
         try {
             // When
             await instance.retractContract({from: seller})
@@ -81,7 +81,7 @@ contract('Error test for contract retraction', async (accounts) => {
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
         await instance.retractContract({from: seller})
-        await instance.retractContract({from: intermediator})
+        await instance.finalizeRetraction( false, {from: intermediator})
         try {
             // When
             await instance.retractContract({from: buyer})
@@ -96,41 +96,76 @@ contract('Error test for contract retraction', async (accounts) => {
         }
     })
 
-/***********************************************************************************
- retractContract test seller and buyer try both to retract while contract is intact
-/**********************************************************************************/
-    it("Buyer wants to retract after Seller has already retracted", async () => {    
-        // Given
-        await instance.setItem(book, price)
-        await instance.payItem({value: price, from: buyer})
+    /***********************************************************************************
+     finalizeRetraction test
+    /**********************************************************************************/
+    
+    it("Finalize Retraction by buyer should fail", async () => {    
+        await instance.retractContract({from: buyer})
+        try {
+            // When
+            await instance.finalizeRetraction(true, {from: buyer})
+            assert.fail("finalizeRetraction from buyer should fail")            
+        } catch (error) {
+            // Then
+            assert.ok(/revert/.test(error))
+        }
+    }) 
+
+    it("Finalize Retraction by seller should fail", async () => {    
         await instance.retractContract({from: seller})
         try {
             // When
-            await instance.retractContract({from: buyer})
-            assert.fail("retractContract from buyer should fail")
+            await instance.finalizeRetraction(false, {from: seller})
+            assert.fail("finalizeRetraction from seller should fail")            
         } catch (error) {
             // Then
-            let agreement = await instance.agreement();
-            assert.strictEqual(agreement.buyerRetract, false, "Buyer should not be marked as retracted")
-            assert.strictEqual(agreement.sellerRetract, true, "Seller should be marked as retracted")
             assert.ok(/revert/.test(error))
         }
     })
 
-    it("Seller wants to retract after Buyer has already retracted", async () => {    
+    it("Contract is retracted, but intermediator calls finalize again", async () => {    
         // Given
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
-        await instance.retractContract({from: buyer})
+        await instance.retractContract({from: seller})
+        await instance.finalizeRetraction( false, {from: intermediator})
         try {
             // When
-            await instance.retractContract({from: seller})
-            assert.fail("retractContract from seller should fail")
+            await instance.finalizeRetraction(true, {from: intermediator})
+            assert.fail("finalizeRetraction from intermediator should fail")            
         } catch (error) {
             // Then
-            let agreement = await instance.agreement();
-            assert.strictEqual(agreement.buyerRetract, true, "Buyer should be marked as retracted")
-            assert.strictEqual(agreement.sellerRetract, false, "Seller should not be marked as retracted")
+            assert.ok(/revert/.test(error))
+        }
+    })
+
+    it("Contract is not intact, but intermediator calls finalize", async () => {    
+        // Given
+        await instance.setItem(book, price)
+        await instance.payItem({value: price, from: buyer})
+        await instance.itemReceived({from: buyer})
+        await instance.withdraw({from: seller})
+        try {
+            // When
+            await instance.finalizeRetraction(true, {from: intermediator})
+            assert.fail("finalizeRetraction from intermediator should fail")            
+        } catch (error) {
+            // Then
+            assert.ok(/revert/.test(error))
+        }
+    })
+
+    it("Contract is not marked as retracted by buyer or seller, but intermediator calls finalize", async () => {    
+        // Given
+        await instance.setItem(book, price)
+        await instance.payItem({value: price, from: buyer})
+        try {
+            // When
+            await instance.finalizeRetraction(true, {from: intermediator})
+            assert.fail("finalizeRetraction from intermediator should fail")            
+        } catch (error) {
+            // Then
             assert.ok(/revert/.test(error))
         }
     })

@@ -32,7 +32,7 @@ contract('Error Tests for owned functionality', async (accounts) => {
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
         await instance.retractContract({from: buyer})
-        await instance.retractContract({from: intermediator})
+        await instance.finalizeRetraction(true, {from: intermediator})
 
         try {
             // When
@@ -64,7 +64,7 @@ contract('Error Tests for owned functionality', async (accounts) => {
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
         await instance.retractContract({from: buyer})
-        await instance.retractContract({from: intermediator})
+        await instance.finalizeRetraction(true, {from: intermediator})
 
         try {
             // When

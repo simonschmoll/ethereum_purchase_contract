@@ -77,50 +77,72 @@ contract SalesContract is Retraction {
      */
     function withdraw() 
         public 
-        onlyBy(seller) 
-        itemIsReceived() 
+        onlyBySellerOrBuyer() 
         contractIntact()
-        contractIsRetracted(false) 
     {
+        if(contractRetracted) {
+            if(buyerIsPaidBack) {
+                require(
+                    msg.sender == buyer,
+                    "Sender is not the allowed to perform this action."
+                );
+            } else {
+                require(
+                    msg.sender == seller,
+                    "Sender is not the allowed to perform this action."
+                );
+            }
+            emit WithdrawalFromRetraction(msg.sender, item.price); 
+        } else {
+            require(
+                item.itemReceived == true,
+                "Item must be marked as received to withdraw money, please contact the buyer."
+            );
+            require(
+                msg.sender == seller,
+                "Sender is not the allowed to perform this action."
+            );
+        }
+        assert(address(this).balance > 0);
         contractIsClosed = true;
         msg.sender.transfer(item.price);
         emit ContractIsSettled(msg.sender, buyer, item.price);
     }
 
-    /**
-     * Withdraw after retraction
-     * Buyer can withdraw money if contract is retracted and he is ruled right
-     * Modifier: only by buyer, contractRetracted == false, buyerIsPaidBack == true
-     */
-    function withdrawAfterRetractionByBuyer() 
-        public
-        onlyBy(buyer) 
-        contractIsRetracted(true) 
-        buyerIsRuledRight(true)
-    {
-        assert(contractIsClosed == false);
-        assert(address(this).balance == item.price);
-        contractIsClosed = true;
-        msg.sender.transfer(item.price);
-        emit WithdrawalFromRetraction(msg.sender, item.price);   
-    }
+    // /**
+    //  * Withdraw after retraction
+    //  * Buyer can withdraw money if contract is retracted and he is ruled right
+    //  * Modifier: only by buyer, contractRetracted == false, buyerIsPaidBack == true
+    //  */
+    // function withdrawAfterRetractionByBuyer() 
+    //     public
+    //     onlyBy(buyer) 
+    //     contractIsRetracted(true) 
+    //     buyerIsRuledRight(true)
+    // {
+    //     assert(contractIsClosed == false);
+    //     assert(address(this).balance == item.price);
+    //     contractIsClosed = true;
+    //     msg.sender.transfer(item.price);
+    //     emit WithdrawalFromRetraction(msg.sender, item.price);   
+    // }
 
-    /**
-     * Withdraw after retraction
-     * Seller can withdraw money if contract is retracted and he is ruled right
-     * Modifier: only by seller, contractRetracted == false, buyerIsPaidBack == false
-     */
-    function withdrawAfterRetractionBySeller() 
-        public
-        onlyBy(seller) 
-        contractIsRetracted(true) 
-        buyerIsRuledRight(false)
-    {
-        assert(address(this).balance == item.price);
-        contractIsClosed = true;
-        msg.sender.transfer(item.price);
-        emit WithdrawalFromRetraction(msg.sender, item.price);   
-    }
+    // /**
+    //  * Withdraw after retraction
+    //  * Seller can withdraw money if contract is retracted and he is ruled right
+    //  * Modifier: only by seller, contractRetracted == false, buyerIsPaidBack == false
+    //  */
+    // function withdrawAfterRetractionBySeller() 
+    //     public
+    //     onlyBy(seller) 
+    //     contractIsRetracted(true) 
+    //     buyerIsRuledRight(false)
+    // {
+    //     assert(address(this).balance == item.price);
+    //     contractIsClosed = true;
+    //     msg.sender.transfer(item.price);
+    //     emit WithdrawalFromRetraction(msg.sender, item.price);   
+    // }
 
     /**
      * Setter

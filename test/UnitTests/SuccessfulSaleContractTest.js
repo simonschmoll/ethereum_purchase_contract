@@ -169,11 +169,11 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         await instance.payItem({value: price, from: buyer})
         let balanceContractBefore = new BigNumber(await web3.eth.getBalance(instance.address))
         await instance.retractContract({from: buyer})
-        await instance.retractContract({from: intermediator})
+        await instance.finalizeRetraction(true, {from: intermediator})
 
         // When 
         let balanceBuyerBefore = new BigNumber(await web3.eth.getBalance(buyer))
-        let hash = await instance.withdrawAfterRetractionByBuyer({from: buyer})
+        let hash = await instance.withdraw({from: buyer})
         let balanceRaw = await web3.eth.getBalance(buyer)
         let expectedBalanceBuyerAfter = new BigNumber(balanceRaw)
         let tx = hash["tx"]
@@ -204,11 +204,11 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         await instance.payItem({value: price, from: buyer})
         let balanceContractBefore = new BigNumber(await web3.eth.getBalance(instance.address))
         await instance.retractContract({from: seller})
-        await instance.retractContract({from: intermediator})
+        await instance.finalizeRetraction(false, {from: intermediator})
 
         // When
         let balanceSellerBefore = new BigNumber(await web3.eth.getBalance(seller))
-        let hash = await instance.withdrawAfterRetractionBySeller({from: seller})
+        let hash = await instance.withdraw({from: seller})
         let balanceRaw = await web3.eth.getBalance(seller)
         let expectedBalanceSellerAfter = new BigNumber(balanceRaw)
         let tx = hash["tx"]
@@ -271,10 +271,10 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
         await instance.retractContract({from: buyer})
-        await instance.retractContract({from: intermediator})
+        await instance.finalizeRetraction(true, {from: intermediator})
         
         // When
-        let result = await instance.withdrawAfterRetractionByBuyer({from: buyer})
+        let result = await instance.withdraw({from: buyer})
 
         // Assert
         truffleAssert.eventEmitted(result, 'WithdrawalFromRetraction', (ev) => {
@@ -288,10 +288,10 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
         await instance.retractContract({from: seller})
-        await instance.retractContract({from: intermediator})
+        await instance.finalizeRetraction(false, {from: intermediator})
         
         // When
-        let result = await instance.withdrawAfterRetractionBySeller({from: seller})
+        let result = await instance.withdraw({from: seller})
 
         // Assert
         truffleAssert.eventEmitted(result, 'WithdrawalFromRetraction', (ev) => {

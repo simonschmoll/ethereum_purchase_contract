@@ -53,18 +53,8 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
         assert.strictEqual(agreement.buyerRetract, true, "buyerRetract should be marked false")
     })  
 
-    it("Retract contract intermediator", async () => {
-
-        // When 
-        await instance.retractContract({from: intermediator})
-        let agreement = await instance.agreement()
-
-        // Then
-        assert.strictEqual(agreement.intermediatorRetract, true, "intermediatorRetract should be marked false")
-    })
-
     /***********************************************************************************
-     retractContract() test (buyer and intermediator)
+     retractContract() and finalizeRetraction() test (buyer and intermediator)
     /**********************************************************************************/
    
 
@@ -75,13 +65,14 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
 
         // When 
         await instance.retractContract({from: buyer})
-        await instance.retractContract({from: intermediator})
+        await instance.finalizeRetraction(true, {from: intermediator})
         let agreement = await instance.agreement()
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true, "Contract should be retracted")
         assert.strictEqual(agreement.sellerRetract, false, "sellerRetracted should be marked false")
         assert.strictEqual(agreement.buyerRetract, true, "buyerRetract should be marked true")
+        assert.strictEqual(await instance.buyerIsPaidBack(), true, "buyerIsPaidBack should be marked true")
         assert.strictEqual(agreement.intermediatorRetract, true, "intermediatorRetract should be marked true")
         assert.strictEqual(await instance.contractIsClosed(), false, "Contract should not be marked closed, as there is still money in the contract")
 
@@ -93,19 +84,20 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
 
         // When 
         await instance.retractContract({from: buyer})
-        await instance.retractContract({from: intermediator})
+        await instance.finalizeRetraction(true, {from: intermediator})
         let agreement = await instance.agreement()
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true, "Contract should be retracted")
         assert.strictEqual(agreement.sellerRetract, false, "sellerRetracted should be marked false")
         assert.strictEqual(agreement.buyerRetract, true, "buyerRetract should be marked true")
+        assert.strictEqual(await instance.buyerIsPaidBack(), false, "buyerIsPaidBack should be marked false")
         assert.strictEqual(agreement.intermediatorRetract, true, "intermediatorRetract should be marked true")
         assert.strictEqual(await instance.contractIsClosed(), true, "Contract should be marked closed, as there is no money in the contract")
     })
 
     /***********************************************************************************
-     retractContract() test (seller and intermediator)
+     retractContract() and finalizeRetraction() test (seller and intermediator)
     /**********************************************************************************/
   
     it("Retract paid contract seller and intermediator", async () => {
@@ -115,13 +107,14 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
 
         // When 
         await instance.retractContract({from: seller})
-        await instance.retractContract({from: intermediator})
+        await instance.finalizeRetraction(false, {from: intermediator})
         let agreement = await instance.agreement()
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true, "Contract should be retracted")
         assert.strictEqual(agreement.buyerRetract, false, "buyerRetracted should be marked false")
         assert.strictEqual(agreement.sellerRetract, true, "sellerRetracted should be marked true")
+        assert.strictEqual(await instance.buyerIsPaidBack(), false, "buyerIsPaidBack should be marked false")
         assert.strictEqual(agreement.intermediatorRetract, true, "intermediatorRetracted should be marked true")
         assert.strictEqual(await instance.contractIsClosed(), false, "Contract should not be marked closed, as there is still money in the contract")
     })
@@ -132,13 +125,14 @@ contract('Successful Tests for ContractRetraction', async (accounts) => {
 
         // When 
         await instance.retractContract({from: seller})
-        await instance.retractContract({from: intermediator})
+        await instance.finalizeRetraction(false, {from: intermediator})
         let agreement = await instance.agreement()
 
         // Then
         assert.strictEqual(await instance.contractRetracted(), true, "Contract should be retracted")
         assert.strictEqual(agreement.buyerRetract, false, "buyerRetracted should be marked false")
         assert.strictEqual(agreement.sellerRetract, true, "sellerRetracted should be marked true")
+        assert.strictEqual(await instance.buyerIsPaidBack(), false, "buyerIsPaidBack should be marked false")
         assert.strictEqual(agreement.intermediatorRetract, true, "intermediatorRetracted should be marked true")
         assert.strictEqual(await instance.contractIsClosed(), true, "Contract should be marked closed, as there is no money in the contract")
     })

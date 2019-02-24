@@ -122,6 +122,19 @@ contract Owned {
 
     /**
      * Modifier
+     * Only _account is qualified to access function
+     */
+    modifier onlyBySellerOrBuyer() 
+    {
+        require(
+            (msg.sender == seller) || (msg.sender == buyer),
+            "Sender must be seller or buyer of the contract"
+        );
+        _;
+    }
+
+    /**
+     * Modifier
      * Only after _time can the function be executed
      */
     modifier onlyAfter(uint _time) {
