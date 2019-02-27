@@ -72,25 +72,27 @@ Steps necessary:
 
 Now you are ready to interact with the contract.  
 Go to http://localhost:8082/  
+
+Deployment:
 The standard flow is as follows:
 - Insert the addresses of the 3 imported addresses into the 3 different fields 'seller', 'buyer', 'intermediator'
-- Select the account of the address of seller in MetaMask and press 'Deploy'. If you do not choose the seller the contract will not be instantiated, because only the owner of the address of 'seller' can deploy the contract
+- Select the account of the address of seller in MetaMask and press 'Deploy'. If you do not choose the account of the seller to deploy the contract will not be instantiated. This is because only the owner of the address of 'seller' can deploy the contract.
 
 **Hint: You can rename accounts in MetaMask, press the menu icon --> next the 'details' button --> now you can change the name on the top**
 - After pressing the button 'Deploy', these addresses will be associated with the respective sales position
-- Next a popup should be displayed where you have to accept the transaction, afterwards the contract is deployed on the local chain
+- Next a popup should be displayed where you have to accept the transaction, afterwards the contract is deployed on the local chain (ganache)
 
 ### Intended steps for interaction: 
 **Everytime you select a action, make sure the right account is selected in MetaMask**
+
 - Set Item (Seller)
 - Pay Item (Buyer)
 - Received Item (Buyer)
 - Withdraw (Seller)
 
 Other actions:
-- Retract (Seller, Buyer, Intermediator)
+- Retract (Seller, Buyer, Intermediator - in favor of Buyer or Seller)
 - Withdraw (Buyer) - after dispute the buyer can withdraw the money if he is ruled right
-
 
 # Quick start
 (Pre condition: npm, ganache)  
