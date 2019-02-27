@@ -10,7 +10,6 @@
     "test": "truffle test"
   },
   "dependencies": {
-    "bignumber.js": "^8.0.2",
     "truffle": "^5.0.1",
     "truffle-assertions": "^0.8.0"
   }
