@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="SalesContract">
-      <p class="account">Contract Balance: {{getBalance}}</p>
+      <p class="account">Contract Balance: {{getBalance}} Eth</p>
       <p class="account">Contract Address: {{getContractAddress}}</p>
       <h1>Overview:</h1>
       <table>
@@ -17,7 +17,7 @@
           <td>{{contract.buyer}}</td>
           <td>{{contract.intermediator}}</td>
           <td>{{getItem.name}}</td>
-          <td>{{getItem.price}}</td>
+          <td>{{getItem.price}} Eth</td>
         </tr>
       </table>
       <table>
@@ -25,6 +25,7 @@
             <th>Paid?</th>
             <th>Received?</th>
             <th>Closed?</th>
+            <th>Buyer is paid back?</th>
           </tr>
         <tr>
           <td v-if="getItem.itemPaid===false" style="background-color: #F66666">No</td>
@@ -32,6 +33,8 @@
           <td v-if="getItem.itemReceived===false" style="background-color: #F66666">No</td>
           <td v-else style="background-color: green">Yes</td>
           <td v-if="getStatus===false" style="background-color: #F66666">No</td>
+          <td v-else style="background-color: green">Yes</td>
+          <td v-if="getBuyerIsPaidBack===false" style="background-color: #F66666">No</td>
           <td v-else style="background-color: green">Yes</td>
         </tr>
       </table>
@@ -59,7 +62,7 @@
         <h1>Actions Seller:</h1>
         <table class="actionTable">
           <tr>
-            <th class="thAction">Set Item</th>
+            <th class="thAction">Set Item (in Eth)</th>
             <th class="thAction">Withdraw</th>
             <th class="thAction">Retract</th>
           </tr>
@@ -89,7 +92,7 @@
         <table class="actionTable">
           <tr>
             <th class="thAction">Received Item</th>
-            <th class="thAction">Price: {{getItem.price}}</th>
+            <th class="thAction">Price: {{getItem.price}} Eth</th>
             <th class="thAction">Retract</th>
             <th v-if="getBuyerIsPaidBack" class="thAction">Withdraw after dispute</th>
           </tr>

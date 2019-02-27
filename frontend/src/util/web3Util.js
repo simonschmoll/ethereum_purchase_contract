@@ -33,9 +33,12 @@ async function loadExistingContract(address) {
 async function loadContractData(contract, contractState) {
   return new Promise(async (resolve, reject) => {
     await contract.methods.getContractBalance().call()
-      .then((result) => { contractState.balance = result; });
+      .then((result) => { contractState.balance = getWeb3.utils.fromWei(result); });
     await contract.methods.getItem().call()
-      .then((result) => { contractState.item = result; });
+      .then((result) => {
+        contractState.item = result;
+        contractState.item.price = getWeb3.utils.fromWei(result.price);
+      });
     await contract.methods.getSeller().call()
       .then((result) => { contractState.seller = result; });
     await contract.methods.getBuyer().call()
@@ -54,7 +57,7 @@ async function loadContractData(contract, contractState) {
 }
 
 async function setItem(contractInstance, name, price) {
-  return contractInstance.methods.setItem(name.toString(), price.toString())
+  return contractInstance.methods.setItem(name.toString(), getWeb3.utils.toWei(price.toString()))
     .send({ from: window.web3.eth.defaultAccount });
 }
 
@@ -66,8 +69,9 @@ async function itemReceived(contractInstance) {
 
 async function payItem(contractInstance, price) {
   console.log('Paying called in webutil', price);
+  const priceInWei = getWeb3.utils.toWei(price);
   return contractInstance.methods.payItem()
-    .send({ from: window.web3.eth.defaultAccount, value: price });
+    .send({ from: window.web3.eth.defaultAccount, value: priceInWei });
 }
 
 async function withdraw(contractInstance) {

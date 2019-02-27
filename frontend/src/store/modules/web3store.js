@@ -44,17 +44,11 @@ export default {
           .then((result) => { commit('saveContractData', result); });
       }
     },
-    async loadInitialData({ state, commit }) {
+    async loadInitialData({ state, dispatch }) {
       console.log('Loading InitialData');
-      const contractInstanceLocal = state.contractInstance;
-      console.log('contract Instance in loadInitData action', contractInstanceLocal);
 
-      if (contractInstanceLocal) {
-        console.log('Loading contract data (action) if condition (init)');
-        web3util.loadContractData(
-          contractInstanceLocal, state.contractState,
-        ).then(result => commit('loadInitialData', result))
-          .catch(error => window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache'));
+      if (state.contractInstance) {
+        dispatch('loadContractData')
       }
     },
     async loadContractData({ state, commit }) {
