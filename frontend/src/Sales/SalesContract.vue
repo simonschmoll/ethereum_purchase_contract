@@ -2,6 +2,7 @@
   <div>
     <div class="SalesContract">
       <p class="account">Contract Balance: {{getBalance}}</p>
+      <p class="account">Contract Address: {{getContractAddress}}</p>
       <h1>Overview:</h1>
       <table>
           <tr>
@@ -148,6 +149,7 @@ export default {
       getAgreement: 'getAgreement',
       getBuyerIsPaidBack: 'getBuyerIsPaidBack',
       getBalance: 'getBalance',
+      getContractAddress: 'getContractAddress',
     }),
     contract() {
       console.log(
@@ -158,7 +160,6 @@ export default {
     },
   },
   methods: {
-    // ...mapActions('web3Module', ['setItem']),
     sendItem() {
       const name = this.itemName;
       const price = this.itemPrice.toString();
@@ -282,8 +283,4 @@ button {
 .account {
   margin: 20px;
 }
-/* .actionTable {
-  width: 400px;
-  height: 200px;
-} */
 </style>

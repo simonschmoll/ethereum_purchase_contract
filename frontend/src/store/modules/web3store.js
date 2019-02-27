@@ -26,8 +26,17 @@ export default {
     },
     web3Instance: null,
     web3Address: null,
+    
   },
   actions: {
+    async connectToContract({ state, dispatch }, { contractAddr }) {
+      const contractInstanceLocal = await
+      web3util.loadExistingContract(contractAddr.toString());
+      console.log('contract Instance in loadInitData action', contractInstanceLocal);
+      state.contractInstance = contractInstanceLocal;
+      dispatch('loadContractData');
+    },
+
     async pollContract({ state, commit }) {
       state.web3Address = window.web3.eth.defaultAccount;
       if (state.contractInstance) {
@@ -37,13 +46,8 @@ export default {
     },
     async loadInitialData({ state, commit }) {
       console.log('Loading InitialData');
-      // const contractInstanceLocal = state.contractInstance;
-
-      // TODO: just for testing, connect to existing contract
-      const contractInstanceLocal = await
-      web3util.loadExistingContract('0xeE3c4b6276D2621086B7e19812e9A04b4D2f0F6e');
+      const contractInstanceLocal = state.contractInstance;
       console.log('contract Instance in loadInitData action', contractInstanceLocal);
-      state.contractInstance = contractInstanceLocal;
 
       if (contractInstanceLocal) {
         console.log('Loading contract data (action) if condition (init)');
@@ -136,6 +140,7 @@ export default {
     getAgreement: state => state.contractState.agreement,
     getBuyerIsPaidBack: state => state.contractState.buyerIsPaidBack,
     getBalance: state => state.contractState.balance,
+    getContractAddress: state => state.contractInstance.options.address,
   },
   mutations: {
     saveContract(state, payload) {

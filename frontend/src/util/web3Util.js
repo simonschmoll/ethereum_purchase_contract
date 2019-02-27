@@ -48,7 +48,6 @@ async function loadContractData(contract, contractState) {
       .then((result) => { contractState.agreement = result; });
     await contract.methods.getBuyerIsPaidBack().call()
       .then((result) => { contractState.buyerIsPaidBack = result; });
-    // console.log('web3util: Contract Instance is:', contractState);
     resolve(contractState);
     reject(new Error('Could not load contract data'));
   });
@@ -77,18 +76,6 @@ async function withdraw(contractInstance) {
     .send({ from: window.web3.eth.defaultAccount });
 }
 
-// async function withdrawAfterDisputeBuyer(contractInstance) {
-//   console.log('Withdraw after dispute called in webutil by buyer');
-//   return contractInstance.methods.withdrawAfterRetractionByBuyer()
-//     .send({ from: window.web3.eth.defaultAccount });
-// }
-
-// async function withdrawAfterDisputeSeller(contractInstance) {
-//   console.log('Withdraw after dispute called in webutil by seller');
-//   return contractInstance.methods.withdrawAfterRetractionBySeller()
-//     .send({ from: window.web3.eth.defaultAccount });
-// }
-
 async function retractContract(contractInstance) {
   console.log('Retract called in webutil');
   return contractInstance.methods.retractContract()
@@ -111,17 +98,6 @@ async function getBalance(contract) {
   return contract.methods.getContractBalance().call();
 }
 
-
-// function watchEvents(contractInstance) {
-//   contractInstance.getPastEvents('SetItem', {
-//     fromBlock: 0,
-//     toBlock: 'latest',
-//   })
-//     .then((events) => {
-//       console.log(events);
-//     });
-// }
-
 export default {
   getAccount,
   deployContract,
@@ -136,6 +112,4 @@ export default {
   retractContract,
   finalizeRetraction,
   getBalance,
-  // withdrawAfterDisputeBuyer,
-  // withdrawAfterDisputeSeller,
 };

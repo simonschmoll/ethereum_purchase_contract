@@ -4,15 +4,20 @@
     <table>
       <thead>
         <th>Deploy</th>
+        <th>Connect to existing Contract</th>
       </thead>
       <tbody>
         <td> Address Seller: <input v-model="addrSeller" type="text"
-          name="ItemName" class="input-con"><br>
+          name="seller" class="input-con"><br>
           Address Buyer: <input v-model="addrBuyer" type="text"
-            name="ItemPrice" class="input-con"><br>
+            name="buyer" class="input-con"><br>
           Address Intermediator:
-          <input v-model="addrIntermediator" type="text" name="ItemPrice" class="input-con"><br>
-          <button class="button buttonBuyer" @click="deployContract()">Submit</button>
+          <input v-model="addrIntermediator" type="text" name="intermediator" class="input-con"><br>
+          <button class="button buttonBuyer" @click="deployContract()">Deploy</button>
+         </td>
+         <td>
+           <input v-model="contractAddress" type="text" name="ContractAddr" class="input-con"><br>
+          <button class="button buttonBuyer" @click="connectToContract()">Connect</button>
          </td>
       </tbody>
     </table>
@@ -24,9 +29,10 @@ export default {
   name: 'deploy',
   data() {
     return {
-      addrSeller: 0,
-      addrBuyer: 0,
-      addrIntermediator: 0,
+      addrSeller: null,
+      addrBuyer: null,
+      addrIntermediator: null,
+      contractAddress: null,
     };
   },
   methods: {
@@ -37,13 +43,11 @@ export default {
       console.log('Sending deploy data to store: ', seller, buyer, intermediator);
       this.$store.dispatch('deploy', { seller, buyer, intermediator });
     },
-  },
-  computed: {
-    getAddr() {
-      return this.$store.state.web3Module.web3Address;
+    connectToContract() {
+      const contractAddr = this.contractAddress;
+      this.$store.dispatch('connectToContract', { contractAddr });
     },
   },
-
 };
 </script>
 
