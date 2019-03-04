@@ -60,6 +60,14 @@ export default {
           .catch(error => window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache'));
       }
     },
+    async changeSeller( { state, dispatch }, newSellerAddress) {
+      console.log('changeSeller (action)', newSellerAddress);
+      web3util.changeSeller(state.contractInstance, newSellerAddress)
+      .then(() => {
+        dispatch('loadContractData')
+      }).catch(error => window.alert('Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache'));
+    },
+
     async setItem({ state, commit }, { name, price }) {
       console.log('Set Item account', window.web3.eth.defaultAccount);
       web3util.setItem(state.contractInstance, name, price)

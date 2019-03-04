@@ -65,6 +65,7 @@
             <th class="thAction">Set Item (in Eth)</th>
             <th class="thAction">Withdraw</th>
             <th class="thAction">Retract</th>
+            <th class="thAction">Change Seller</th>
           </tr>
           <tr>
             <td class="tdAction">
@@ -83,6 +84,14 @@
             </td>
             <td class="tdAction">
               <button class="buttonRetract" @click="retract()">Retract</button>
+            </td>
+            <td class="tdAction">
+              <div class="input-container">
+                <label for="newSeller">Address:</label>
+                <input v-model="newSeller" type="text" name="newSeller">
+              </div>
+              <button class="buttonSeller buttonSubmit"
+              @click="changeSeller()">Change Seller</button>
             </td>
           </tr>
         </table>
@@ -143,6 +152,7 @@ export default {
     return {
       itemName: '',
       itemPrice: 0,
+      newSeller: 0,
     };
   },
   computed: {
@@ -187,6 +197,11 @@ export default {
     retract() {
       console.log('User wants to retract (SalesContract)');
       this.$store.dispatch('retract');
+    },
+    changeSeller() {
+      const newSellerAddress = this.newSeller;
+      console.log('User wants to change seller', newSellerAddress);
+      this.$store.dispatch('changeSeller', newSellerAddress);
     },
   },
 };

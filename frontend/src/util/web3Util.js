@@ -30,6 +30,12 @@ async function loadExistingContract(address) {
   return contract;
 }
 
+async function changeSeller(contractInstance, newSellerAddress) {
+  console.log('Change seller called in webutil', newSellerAddress);
+  return contractInstance.methods.changeSeller(newSellerAddress)
+    .send({ from: window.web3.eth.defaultAccount });
+}
+
 async function loadContractData(contract, contractState) {
   return new Promise(async (resolve, reject) => {
     await contract.methods.getContractBalance().call()
@@ -103,6 +109,7 @@ async function getBalance(contract) {
 }
 
 export default {
+  changeSeller,
   getAccount,
   deployContract,
   loadContractData,
