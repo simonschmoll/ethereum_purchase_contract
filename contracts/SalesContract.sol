@@ -32,7 +32,7 @@ contract SalesContract is Retraction {
 
     /**
      * Constructor
-     * Sets the intermediator and the buyer
+     * Sets the buyer and the intermediator
      */
     constructor(address payable _buyer, address _intermediator) 
         public 
@@ -109,41 +109,6 @@ contract SalesContract is Retraction {
         emit ContractIsSettled(msg.sender, buyer, item.price);
     }
 
-    // /**
-    //  * Withdraw after retraction
-    //  * Buyer can withdraw money if contract is retracted and he is ruled right
-    //  * Modifier: only by buyer, contractRetracted == false, buyerIsPaidBack == true
-    //  */
-    // function withdrawAfterRetractionByBuyer() 
-    //     public
-    //     onlyBy(buyer) 
-    //     contractIsRetracted(true) 
-    //     buyerIsRuledRight(true)
-    // {
-    //     assert(contractIsClosed == false);
-    //     assert(address(this).balance == item.price);
-    //     contractIsClosed = true;
-    //     msg.sender.transfer(item.price);
-    //     emit WithdrawalFromRetraction(msg.sender, item.price);   
-    // }
-
-    // /**
-    //  * Withdraw after retraction
-    //  * Seller can withdraw money if contract is retracted and he is ruled right
-    //  * Modifier: only by seller, contractRetracted == false, buyerIsPaidBack == false
-    //  */
-    // function withdrawAfterRetractionBySeller() 
-    //     public
-    //     onlyBy(seller) 
-    //     contractIsRetracted(true) 
-    //     buyerIsRuledRight(false)
-    // {
-    //     assert(address(this).balance == item.price);
-    //     contractIsClosed = true;
-    //     msg.sender.transfer(item.price);
-    //     emit WithdrawalFromRetraction(msg.sender, item.price);   
-    // }
-
     /**
      * Setter
      * Sets the Item (name, price, default itemPaid, default itemReceived)
@@ -158,7 +123,6 @@ contract SalesContract is Retraction {
         item.itemPaid = false;
         item.itemReceived = false;
         itemIsSet = true;
-        // emit SetItem(_name, _price);
     }
 
     /**

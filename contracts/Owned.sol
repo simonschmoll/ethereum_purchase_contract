@@ -2,6 +2,10 @@ pragma solidity >=0.4.21 <0.6.0;
 
 // Based on the solidity docs for common patterns: https://solidity.readthedocs.io/en/v0.5.0/common-patterns.html?highlight=seller
 contract Owned {
+    /**
+     * Constructor
+     * Sets the message sender as the seller
+     */
     constructor() public { seller = msg.sender; }
     bool public contractRetracted = false;
     uint public creationTime = now;
