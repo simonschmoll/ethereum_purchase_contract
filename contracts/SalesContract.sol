@@ -200,7 +200,7 @@ contract SalesContract is Retraction {
 
     /**
      * Modifier
-     * Check if value of msg sender is equal to price of item
+     * Check if item is set
      */
      modifier itemIsNotSet()
      {
