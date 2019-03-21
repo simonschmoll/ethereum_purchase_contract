@@ -151,6 +151,18 @@ contract SalesContract is Retraction {
 
     /**
      * Getter
+     * Get flag if item is set
+     */
+    function getItemIsSet()
+        public
+        view
+        returns (bool)
+    {
+        return itemIsSet;
+    }
+
+    /**
+     * Getter
      * Get Balance of contract
      * Assertion: Balance must be null or price of item
      */
@@ -202,12 +214,12 @@ contract SalesContract is Retraction {
      * Modifier
      * Check if item is set
      */
-     modifier itemIsNotSet()
+    modifier itemIsNotSet()
      {
         require(
             itemIsSet == false, 
             "Item can only be set once"
             );
         _;
-     }
+    }
 }

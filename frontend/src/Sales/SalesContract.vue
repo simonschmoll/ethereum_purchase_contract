@@ -1,145 +1,408 @@
 <template>
-  <div>
-    <div class="SalesContract">
-      <p class="account">Contract Balance: {{getBalance}} Eth</p>
-      <p class="account">Contract Address: {{getContractAddress}}</p>
-      <h1>Overview:</h1>
-      <table>
-          <tr>
-            <th>Seller</th>
-            <th>Buyer</th>
-            <th>Intermediator</th>
-            <th>Itemname</th>
-            <th>Price</th>
-          </tr>
-        <tr>
-          <td>{{contract.seller}}</td>
-          <td>{{contract.buyer}}</td>
-          <td>{{contract.intermediator}}</td>
-          <td>{{getItem.name}}</td>
-          <td>{{getItem.price}} Eth</td>
-        </tr>
-      </table>
-      <table>
-          <tr>
-            <th>Paid?</th>
-            <th>Received?</th>
-            <th>Closed?</th>
-            <th>Buyer is paid back?</th>
-          </tr>
-        <tr>
-          <td v-if="getItem.itemPaid===false" style="background-color: #F66666">No</td>
-          <td v-else style="background-color: green">Yes</td>
-          <td v-if="getItem.itemReceived===false" style="background-color: #F66666">No</td>
-          <td v-else style="background-color: green">Yes</td>
-          <td v-if="getStatus===false" style="background-color: #F66666">No</td>
-          <td v-else style="background-color: green">Yes</td>
-          <td v-if="getBuyerIsPaidBack===false" style="background-color: #F66666">No</td>
-          <td v-else style="background-color: green">Yes</td>
-        </tr>
-      </table>
-      <table>
-          <caption><strong>Retraction Status</strong></caption>
-          <tr>
-            <th>Seller?</th>
-            <th>Buyer?</th>
-            <th>Intermediator?</th>
-          </tr>
-        <tr>
-          <td v-if="getAgreement.sellerRetract===true"
-            style="background-color: #F66666">Retracted!</td>
-          <td v-else style="background-color: green">Valid</td>
-          <td v-if="getAgreement.buyerRetract===true"
-            style="background-color: #F66666">Retracted!</td>
-          <td v-else style="background-color: green">Valid</td>
-          <td v-if="getAgreement.intermediatorRetract===true"
-            style="background-color: #F66666">Retracted!</td>
-          <td v-else style="background-color: green">Valid</td>
-        </tr>
-      </table>
-      <hr>
-      <div class="actions">
-        <h1>Actions Seller:</h1>
-        <table class="actionTable">
-          <tr>
-            <th class="thAction">Set Item (in Eth)</th>
-            <th class="thAction">Withdraw</th>
-            <th class="thAction">Retract</th>
-            <th class="thAction">Change Seller</th>
-          </tr>
-          <tr>
-            <td class="tdAction">
-              <div class="input-container">
-                <label for="ItemName">Name:</label>
-                <input v-model="itemName" type="text" name="ItemName">
-              </div>
-              <div class="input-container">
-                <label for="ItemPrice">Price:</label>
-                <input v-model="itemPrice" type="text" name="ItemPrice">
-              </div>
-              <button class="buttonSeller buttonSubmit" @click="sendItem()">Submit</button>
-            </td>
-            <td class="tdAction">
-              <button class="buttonSeller" @click="withdraw()">Withdraw</button>
-            </td>
-            <td class="tdAction">
-              <button class="buttonRetract" @click="retract()">Retract</button>
-            </td>
-            <td class="tdAction">
-              <div class="input-container">
-                <label for="newSeller">Address:</label>
-                <input v-model="newSeller" type="text" name="newSeller">
-              </div>
-              <button class="buttonSeller buttonSubmit"
-              @click="changeSeller()">Change Seller</button>
-            </td>
-          </tr>
-        </table>
-      </div>
-      <div class="actions">
-        <h1>Actions Buyer:</h1>
-        <table class="actionTable">
-          <tr>
-            <th class="thAction">Received Item</th>
-            <th class="thAction">Price: {{getItem.price}} Eth</th>
-            <th class="thAction">Retract</th>
-            <th v-if="getBuyerIsPaidBack" class="thAction">Withdraw after dispute</th>
-          </tr>
-          <tr>
-            <td class="tdAction">
-              <button class="buttonBuyer" @click="received()">Received Item</button>
-            </td>
-            <td class="tdAction">
-              <button class="buttonBuyer" @click="pay(getItem.price)">Pay Item</button>
-            </td>
-            <td class="tdAction">
-              <button class="buttonRetract" @click="retract()">Retract</button>
-            </td>
-            <td v-if="getBuyerIsPaidBack" class="tdAction">
-              <button class="buttonWithdrawDispute"
-                @click="withdraw()">Withdraw</button>
-            </td>
-          </tr>
-        </table>
-      </div>
-      <div class="actions">
-        <h1>Actions Intermediator:</h1>
-        <table class="actionTable">
-          <tr>
-            <th class="thAction">Retract in favor of seller</th>
-            <th class="thAction">Retract in favor of buyer</th>
-          </tr>
-          <tr>
-            <td class="tdAction">
-              <button class="buttonRetract" @click="finalizeRetraction(false)">Retract</button>
-            </td>
-            <td class="tdAction">
-              <button class="buttonRetract" @click="finalizeRetraction(true)">Retract</button>
-            </td>
-          </tr>
-        </table>
-      </div>
+  <div class="SalesContract">
+    <div class="balance text-xs-center">
+      <v-btn large round color="black" outline>
+        Contract Balance: {{getBalance}}
+      </v-btn>
     </div>
+    <h2 class="text-xs-center">Overview</h2>
+    <v-container fluid grid-list-xl fill-height>
+      <v-layout>
+        <v-flex md4>
+          <v-card color="secondary" hover>
+            <v-card-text>
+              <div>
+                <h2>Seller</h2>
+                <v-divider class="divider"></v-divider>
+                <table style="width: 290px;">
+                  <tr>
+                    <td>Account Address:</td>
+                    <td style="word-break: break-all;">{{contract.seller}}</td>
+                  </tr>
+                  <tr>
+                    <td>Retracted?</td>
+                    <td>
+                      <v-chip small dark color="success"
+                        v-if="getAgreement.sellerRetract">Yes
+                        <v-icon dark right>check_circle</v-icon>
+                      </v-chip>
+                      <v-chip small dark color="error" v-else>No
+                        <v-icon dark right>cancel</v-icon>
+                      </v-chip>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+        <v-flex md4>
+          <v-card color="secondary" hover>
+            <v-card-text>
+              <div>
+                <h2>Buyer</h2>
+                <v-divider class="divider"></v-divider>
+                <table style="width: 290px;">
+                  <tr>
+                    <td>Account Address:</td>
+                    <td style="word-break: break-all;">{{contract.buyer}}</td>
+                  </tr>
+                  <tr>
+                    <td>Retracted?</td>
+                    <td>
+                      <v-chip small dark color="success" v-if="getAgreement.buyerRetract">Yes
+                        <v-icon dark right>check_circle</v-icon>
+                      </v-chip>
+                      <v-chip small dark color="error" v-else>No
+                        <v-icon dark right>cancel</v-icon>
+                      </v-chip>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Paid?</td>
+                    <td>
+                      <v-chip small dark color="success" v-if="getItem.itemPaid">Yes
+                        <v-icon dark right>check_circle</v-icon>
+                      </v-chip>
+                      <v-chip small dark color="error" v-else>No
+                        <v-icon dark right>cancel</v-icon>
+                      </v-chip>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Received?</td>
+                    <td>
+                      <v-chip small dark color="success" v-if="getItem.itemReceived">Yes
+                        <v-icon dark right>check_circle</v-icon>
+                      </v-chip>
+                      <v-chip small dark color="error" v-else>No
+                        <v-icon dark right>cancel</v-icon>
+                      </v-chip>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Paid Back?</td>
+                    <td>
+                      <v-chip small dark color="success" v-if="getBuyerIsPaidBack">Yes
+                        <v-icon dark right>check_circle</v-icon>
+                      </v-chip>
+                      <v-chip small dark color="error" v-else>No
+                        <v-icon dark right>cancel</v-icon>
+                      </v-chip>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+        <v-flex md4>
+          <v-card color="secondary" hover>
+            <v-card-text>
+              <div>
+                <h2>Intermediator</h2>
+                <v-divider class="divider"></v-divider>
+                <table style="width: 290px;">
+                  <tr>
+                    <td>Account Address:</td>
+                    <td style="word-break: break-all;">{{contract.intermediator}}</td>
+                  </tr>
+                  <tr>
+                    <td>Retracted?</td>
+                    <td>
+                      <v-chip
+                        small
+                        dark
+                        color="success"
+                        v-if="getAgreement.intermediatorRetract"
+                      >Yes
+                        <v-icon dark right>check_circle</v-icon>
+                      </v-chip>
+                      <v-chip small dark color="error" v-else>No
+                        <v-icon dark right>cancel</v-icon>
+                      </v-chip>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+        <v-flex md4>
+          <v-card color="secondary" hover>
+            <v-card-text>
+              <div>
+                <h2>Contract Status</h2>
+                <v-divider class="divider"></v-divider>
+                <table style="width: 290px;">
+                  <tr>
+                    <td>Account Address:</td>
+                    <td style="word-break: break-all;">{{getContractAddress}}</td>
+                  </tr>
+                  <tr>
+                    <td>Item Name</td>
+                    <td>{{getItem.name}}</td>
+                  </tr>
+                  <tr>
+                    <td>Item Price</td>
+                    <td>{{getItem.price}}</td>
+                  </tr>
+                  <tr>
+                    <td>Retracted?</td>
+                    <td>
+                      <v-chip small dark color="success" v-if="contract.retracted">Yes
+                        <v-icon dark right>check_circle</v-icon>
+                      </v-chip>
+                      <v-chip small dark color="error" v-else>No
+                        <v-icon dark right>cancel</v-icon>
+                      </v-chip>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Closed?</td>
+                    <td>
+                      <v-chip small dark color="success" v-if="contract.contractClosed">Yes
+                        <v-icon dark right>check_circle</v-icon>
+                      </v-chip>
+                      <v-chip small dark color="error" v-else>No
+                        <v-icon dark right>cancel</v-icon>
+                      </v-chip>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+    <v-divider class="pageDivider"></v-divider>
+    <v-container fluid fill-height>
+      <v-flex class="actions" md4>
+      <h1>Actions Seller:</h1>
+      <div>
+        <!-- <v-layout fill-height> -->
+          <v-tabs color="primary" dark slider-color="yellow">
+            <v-tab>Set Item</v-tab>
+            <v-tab>Withdraw</v-tab>
+            <v-tab>Retract</v-tab>
+            <v-tab>Change Seller</v-tab>
+            <v-tab-item>
+              <v-card color="secondary" hover>
+                <v-layout align-center justify-center row fill-height>
+                  <v-flex>
+                    <v-card-title primary-title>
+                      <div>
+                        <v-text-field label="Name"
+                          v-model="itemName" name="itemName"></v-text-field>
+                        <v-text-field label="Price"
+                          v-model="itemPrice" name="itemPrice"></v-text-field>
+                      </div>
+                    </v-card-title>
+                  </v-flex>
+                  <v-flex>
+                    <v-card-actions>
+                      <v-btn
+                        :loading="loadingSeller"
+                        :disabled="loadingSeller
+                        || Boolean(getItemSet)
+                        || Boolean(contract.contractClosed)"
+                        large round color="primary"
+                        @click="sendItem();loader = 'loadingSeller'">Set Item
+                      <v-icon color="info" x-large right>add</v-icon>
+                      </v-btn>
+                    </v-card-actions>
+                  </v-flex>
+                </v-layout>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card color="secondary" hover>
+                <v-layout align-center justify-center fill-height>
+                  <v-card-actions>
+                    <v-btn :loading="loadingSeller"
+                      :disabled="loadingSeller || Boolean(contract.contractClosed)"
+                      large round color="primary"
+                      @click="withdraw();loader = 'loadingSeller'">Withdraw
+                      <v-icon color="info" x-larage right>attach_money</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-layout>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card color="secondary" hover>
+                <v-layout align-center justify-center row fill-height>
+                  <v-card-actions>
+                    <v-btn :loading="loadingSeller"
+                      :disabled="loadingSeller
+                      || Boolean(getAgreement.sellerRetract)
+                      || Boolean(contract.contractClosed)"
+                      large round color="primary"
+                      @click="retract();loader = 'loadingSeller'">Retract
+                      <v-icon color="warning" x-large right>report</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-layout>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card color="secondary" hover>
+                <v-layout align-center justify-center row fill-height>
+                  <v-card-text>
+                    <div>
+                      <v-text-field label="New Seller"
+                      v-model="newSeller" name="newSeller"></v-text-field>
+                    </div>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn :loading="loadingSeller"
+                      :disabled="loadingSeller || Boolean(contract.contractClosed)"
+                      large round color="primary"
+                      @click="changeSeller();loader = 'loadingSeller'">Change
+                      <v-icon color="info" x-large dark right>loop</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-layout>
+              </v-card>
+            </v-tab-item>
+          </v-tabs>
+        <!-- </v-layout> -->
+      </div>
+      </v-flex>
+      <v-flex class="actions" md4>
+      <h1>Actions Buyer:</h1>
+      <div>
+        <!-- <v-layout fill-height> -->
+          <v-tabs color="primary" dark slider-color="yellow">
+            <v-tab>Received Item</v-tab>
+            <v-tab>Pay</v-tab>
+            <v-tab>Retract</v-tab>
+            <v-tab>Withdraw Dispute</v-tab>
+            <v-tab-item>
+              <v-card color="secondary" hover>
+                <v-layout align-center justify-center row fill-height>
+                  <v-card-actions>
+                    <v-btn :loading="loadingBuyer"
+                    :disabled="loadingBuyer
+                    || Boolean(getItem.itemReceived)
+                    || Boolean(contract.contractClosed)"
+                      round large color="primary"
+                      @click="received();loader = 'loadingBuyer'">Received
+                      <v-icon color="info" x-large dark right>mail</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-layout>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card color="secondary" hover>
+                <v-layout align-center justify-center row fill-height>
+                  <v-card-actions>
+                    <v-btn
+                      :loading="loadingBuyer"
+                      :disabled="loadingBuyer
+                      || Boolean(getItem.itemPaid)
+                      || Boolean(contract.contractClosed)"
+                      large
+                      round
+                      color="primary"
+                      @click="pay(getItem.price);loader = 'loadingBuyer'"
+                    >Pay {{getItem.price}}
+                    <v-icon color="info" x-large dark right>payment</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-layout>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card color="secondary" hover>
+                <v-layout align-center justify-center row fill-height>
+                  <v-card-actions>
+                    <v-btn :loading="loadingBuyer"
+                      :disabled="loadingBuyer
+                      || Boolean(getAgreement.buyerRetract)
+                      || Boolean(contract.contractClosed)"
+                      large round color="primary"
+                      @click="retract();loader = 'loadingBuyer'">Retract
+                      <v-icon color="warning" x-large right>report</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-layout>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card color="secondary" hover>
+                <v-layout align-center justify-center fill-height>
+                  <v-card-actions>
+                    <v-btn
+                      :loading="loadingBuyer"
+                      :disabled="loadingBuyer
+                      || (!Boolean(getBuyerIsPaidBack))
+                      || Boolean(contract.contractClosed)"
+                      large
+                      round
+                      color="primary"
+                      @click="withdraw();loader = 'loadingBuyer'"
+                    >Withdraw
+                      <v-icon color="info" x-larage right>attach_money</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-layout>
+              </v-card>
+            </v-tab-item>
+          </v-tabs>
+        <!-- </v-layout> -->
+      </div>
+      </v-flex>
+      <v-flex class="actions" md4>
+      <h1>Actions Intermediator:</h1>
+      <div>
+        <!-- <v-layout fill-height> -->
+          <v-tabs color="primary" dark slider-color="yellow">
+            <v-tab>Retract favoring seller</v-tab>
+            <v-tab>Retract favoring buyer</v-tab>
+            <v-tab-item>
+              <v-card color="secondary" hover>
+                <v-layout align-center justify-center fill-height>
+                  <v-card-actions>
+                    <v-btn :loading="loadingIntermediator"
+                    :disabled="loadingIntermediator
+                    || Boolean(contract.retracted)
+                    || Boolean(contract.contractClosed)"
+                      large round color="primary"
+                      @click="retractIntermed(false);loader = 'loadingIntermediator'">Retract
+                      <v-icon color="warning" x-large right>report</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-layout>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card color="secondary" hover>
+                <v-layout align-center justify-center fill-height>
+                  <v-card-actions>
+                    <v-btn :loading="loadingIntermediator"
+                    :disabled="loadingIntermediator
+                    || Boolean(contract.retracted)
+                    || Boolean(contract.contractClosed)"
+                      large round color="primary"
+                      @click="retractIntermed(true);loader = 'loadingIntermediator'">Retract
+                      <v-icon color="warning" x-large right>report</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-layout>
+              </v-card>
+            </v-tab-item>
+          </v-tabs>
+        <!-- </v-layout> -->
+      </div>
+      </v-flex>
+    </v-container>
+    <v-footer class="pa-3">
+      <v-spacer></v-spacer>
+      <div>&copy; {{ new Date().getFullYear() }}</div>
+    </v-footer>
   </div>
 </template>
 
@@ -150,6 +413,10 @@ export default {
   name: 'SalesContract',
   data() {
     return {
+      loader: null,
+      loadingSeller: false,
+      loadingBuyer: false,
+      loadingIntermediator: false,
       itemName: '',
       itemPrice: 0,
       newSeller: 0,
@@ -163,6 +430,7 @@ export default {
       getBuyerIsPaidBack: 'getBuyerIsPaidBack',
       getBalance: 'getBalance',
       getContractAddress: 'getContractAddress',
+      getItemSet: 'getItemSet',
     }),
     contract() {
       console.log(
@@ -170,6 +438,9 @@ export default {
         this.$store.state.web3Module.contractState,
       );
       return this.$store.state.web3Module.contractState;
+    },
+    loadingFlag() {
+      return this.$store.state.web3Module.loadingFlag;
     },
   },
   methods: {
@@ -191,8 +462,8 @@ export default {
       console.log('User wants to withdraw money');
       this.$store.dispatch('withdraw');
     },
-    finalizeRetraction(buyerRuledRight) {
-      this.$store.dispatch('finalizeRetraction', buyerRuledRight);
+    retractIntermed(buyerIsRight) {
+      this.$store.dispatch('finalizeRetraction', buyerIsRight);
     },
     retract() {
       console.log('User wants to retract (SalesContract)');
@@ -211,17 +482,18 @@ export default {
 table,
 th,
 td {
-  border: 1px solid black;
-  border-collapse: collapse;
+  border: 0px;
 }
 
 th,
 td {
-  padding: 10px;
+  padding: 2px;
+  text-align: center;
+  font-size: 12pt;
 }
 
-table {
-  margin: 20px;
+.actions {
+  margin-left: 10px;
 }
 
 h1 {
@@ -229,76 +501,22 @@ h1 {
   margin: 20px;
 }
 
-.actions {
-  margin-top: 30px;
-  width: 100%;
-  border: 1px solid black;
-  background: grey;
+.divider {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
-footer {
-  width: 100%;
-  bottom: 10px;
-  text-align: center;
+.pageDivider {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
-hr {
-  background-color: black;
-  margin-top: 30px;
-  height: 1px;
-  border: 0;
+.balance {
+  margin: 5px;
+  font-size: 16pt;
 }
 
-input {
-  background-color: #E2DFDF;
-}
-
-label {
-  margin-right: 5px;
-}
-
-button {
-  color: white;
-  padding: 15px 30px;
-  text-align: center;
-  margin: auto;
-  display:flex;
-  cursor: pointer;
-}
-
-.input-container {
-  display: table-row;
-}
-.input-container * {
-  display: table-cell;
-  margin-left: 5px;
-}
-
-.buttonWithdrawDispute,
-.buttonSeller,
-.buttonBuyer {
-  background-color: rgb(125, 180, 126);
-}
-
-.buttonRetract
-{
-  background-color: rgb(243, 147, 147);
-}
-
-.buttonSubmit {
-  margin-top: 10px;
-}
-
-.tdAction,
-.thAction {
-  width: 200px;
-}
-
-.tdAction {
-  height: 100px;
-}
-
-.account {
-  margin: 20px;
+.pa-3 {
+  margin-top: 150px;
 }
 </style>

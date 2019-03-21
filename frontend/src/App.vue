@@ -1,19 +1,16 @@
 <template>
+  <v-app style="background: #E3F2FD">
   <div id="app">
-    <header>
-      <nav>
-        <ul>
-          <li class="nav-item">
-              Sales Contract
-          </li>
-        </ul>
-      </nav>
-    </header>
+     <v-toolbar color="blue darken-3">
+      <span><h2>Sales Contract</h2></span>
+
+    </v-toolbar>
     <main>
-      <router-view v-if="contractInstance" name="default"/>
+       <router-view v-if="contractInstance" name="default"/>
       <router-view v-else name="deploy"/>
     </main>
   </div>
+  </v-app>
 </template>
 
 <script>
@@ -36,7 +33,7 @@ export default {
     poll() {
       this.polling = setInterval(() => {
         this.$store.dispatch('pollContract');
-      }, 3000);
+      }, 2000);
     },
   },
   computed: {

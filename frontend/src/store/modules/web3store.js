@@ -3,6 +3,7 @@ import web3util from '../../util/web3Util';
 /* eslint-disable */
 export default {
   state: {
+    loadingFlag: false,
     contractInstance: null,
     contractState: {
       retracted: false,
@@ -17,6 +18,7 @@ export default {
       intermediator: null,
       contractClosed: false,
       buyerIsPaidBack: false,
+      itemIsSet: false,
       item: {
         name: '',
         price: 0,
@@ -143,6 +145,7 @@ export default {
     getBuyerIsPaidBack: state => state.contractState.buyerIsPaidBack,
     getBalance: state => state.contractState.balance,
     getContractAddress: state => state.contractInstance.options.address,
+    getItemSet: state => state.contractState.itemIsSet,
   },
   mutations: {
     saveContract(state, payload) {
@@ -179,5 +182,9 @@ export default {
       console.log('Updating Balance:', payload);
       state.contractState.balance = payload;
     },
+    changeLoadingFlag(state) {
+      console.log('state loading flag change mutation')
+      state.loadingFlag = false;
+    }
   },
 };
