@@ -77,10 +77,10 @@ contract('Error test for sales contract', async (accounts) => {
         }
     })
 
-    it("Payment is not equal to the price", async () => {
+    it("Payment is smaller than price", async () => {
         // Given
         await instance.setItem(book, price)
-        let wrongPrice = web3.utils.toBN((web3.utils.toWei('2', 'ether')))
+        let wrongPrice = web3.utils.toBN((web3.utils.toWei('0.5', 'ether')))
         try {
             // When
             await instance.payItem({value: wrongPrice, from: buyer})

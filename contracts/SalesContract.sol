@@ -51,7 +51,7 @@ contract SalesContract is Retraction {
         onlyBy(buyer) 
         contractIntact()
         contractIsRetracted(false)  
-        paymentEqualPrice() 
+        paymentGreaterOrEqualPrice() 
     {
         item.itemPaid = true;
         emit PaidItem(seller, msg.sender, msg.value);
@@ -201,10 +201,10 @@ contract SalesContract is Retraction {
      * Modifier
      * Check if value of msg sender is equal to price of item
      */
-    modifier paymentEqualPrice() 
+    modifier paymentGreaterOrEqualPrice() 
     {
         require(
-            msg.value == item.price, 
+            msg.value >= item.price, 
             "The paid amount was not equal to the listed price of the item"
             );
         _;
