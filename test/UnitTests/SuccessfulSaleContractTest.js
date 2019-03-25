@@ -146,13 +146,13 @@ contract('Successful Tests for SalesContract', async (accounts) => {
         let transaction = await web3.eth.getTransaction(tx);
         let gasPrice = transaction.gasPrice
         let gasCost = new BigNumber(gasPrice * gasUsed)
-        let actualAfterBalanceSeller = balanceSellerBefore.minus(gasCost).plus(price)
+        let actualBalanceSellerAfter = balanceSellerBefore.minus(gasCost).plus(price)
 
         // Should not be necessary? Normally web3 returns bigNumber
         let balanceContractAfter = new BigNumber(await web3.eth.getBalance(instance.address))
 
         //Then
-        assert.strictEqual(actualAfterBalanceSeller.toString(), expectedBalanceSellerAfter.toString(), "Seller should have more money after deal (+ price)")
+        assert.strictEqual(actualBalanceSellerAfter.toString(), expectedBalanceSellerAfter.toString(), "Seller should have more money after deal (+ price)")
         assert.strictEqual(balanceContractBefore.toString(), price.toString(), "Balance before withdraw should be equal to price")
         assert.strictEqual(balanceContractAfter.toString(), '0', "Balance after should be 0")
         assert.strictEqual(await instance.contractIsClosed(), true, "Contract should be closed")
