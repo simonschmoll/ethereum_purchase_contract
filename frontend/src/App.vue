@@ -1,19 +1,36 @@
 <template>
   <v-app style="background: #E3F2FD">
   <div id="app">
-     <v-toolbar color="blue darken-3">
+     <v-toolbar color="blue darken-3" dark fixed app>
       <span><h2>Sales Contract</h2></span>
-
+      <v-spacer></v-spacer>
+      <div class="subheading" v-if="contractInstance">
+        Contract Balance: {{getBalance}}
+      </div>
     </v-toolbar>
-    <main>
+    <v-content>
+      <v-alert
+      :value="errorFlag"
+      type="error"
+      transition="scale-transition"
+      >
+      {{errorMessage}}
+      </v-alert>
+      <main>
        <router-view v-if="contractInstance" name="default"/>
       <router-view v-else name="deploy"/>
     </main>
+    </v-content>
+    <v-footer app class="pa-3">
+      <div>&copy; {{ new Date().getFullYear() }}</div>
+    </v-footer>
   </div>
   </v-app>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'app',
   data() {
@@ -41,17 +58,25 @@ export default {
       console.log('Returning contractInstance', this.$store.state.contractInstance);
       return this.$store.state.web3Module.contractInstance;
     },
+    ...mapGetters({
+      getBalance: 'getBalance',
+    }),
+    errorMessage() {
+      return this.$store.state.web3Module.errorMessage;
+    },
+    errorFlag() {
+      return this.$store.state.web3Module.errorFlag;
+    },
+  },
+  watch: {
+    errorFlag() {
+      setTimeout(() => {
+        this.$store.commit('changeErrorFlagAndMessage');
+      }, 4000);
+    },
   },
 };
 </script>
-
-<style>
-body {
-  background: linear-gradient(to bottom, rgb(121, 121, 121), #1000);
-  background-attachment: fixed;
-}
-</style>
-
 
 <style scoped>
 #app {
@@ -65,7 +90,7 @@ main {
   top: 20px;
 }
 header {
-  background-color: #999;
+  background-color: #bdc3c7;
   width: auto;
   margin: 0 auto;
 }

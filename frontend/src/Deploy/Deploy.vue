@@ -3,10 +3,10 @@
     <h1>Deploy and initialize contract</h1>
     <v-container fluid grid-list-xl fill-height>
       <v-layout>
-        <v-flex md6>
-          <v-card color="secondary" hover>
+        <v-flex md4>
+          <v-card color="secondary">
           <v-card-title primary-title>
-            <v-layout align-center justify-center column fill-height>
+            <div>
               <h3 class="display-1 mb-3">Deploy</h3>
               <div>
                 <v-text-field label="Address Seller" v-model="addrSeller"
@@ -16,7 +16,7 @@
                 <v-text-field label="Address Intermediator" v-model="addrIntermediator"
                 name="intermediator"></v-text-field>
               </div>
-            </v-layout>
+            </div>
           </v-card-title>
           <v-card-actions>
             <v-btn :loading="deployloader" :disabled="deployButtonDisabled"
@@ -26,8 +26,8 @@
           </v-card-actions>
         </v-card>
         </v-flex>
-        <v-flex md6>
-          <v-card color="secondary" hover>
+        <v-flex md4>
+          <v-card color="secondary">
           <v-card-title primary-title>
             <div>
               <h3 class="display-1 mb-3">Connect to contract</h3>
@@ -119,6 +119,7 @@ export default {
 </script>
 
 <style scoped>
+
 h1 {
   font-size: 24pt;
 }

@@ -57,6 +57,8 @@ async function loadContractData(contract, contractState) {
       .then((result) => { contractState.agreement = result; });
     await contract.methods.getBuyerIsPaidBack().call()
       .then((result) => { contractState.buyerIsPaidBack = result; });
+    await contract.methods.getContractRetracted().call()
+      .then((result) => { contractState.retracted = result; });
     await contract.methods.getItemIsSet().call()
       .then((result) => { contractState.itemIsSet = result; });
     resolve(contractState);

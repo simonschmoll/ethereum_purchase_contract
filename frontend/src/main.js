@@ -9,11 +9,12 @@ Vue.use(Vuetify, {
   theme: {
     primary: '#1565C0',
     secondary: '#90CAF9',
-    accent: '#0D47A1',
+    accent: '#BBDEFB',
     error: '#E53935',
-    info: '#FFEE58',
+    info: '#FFFF00',
     success: '#00C853',
     warning: '#FF6D00',
+    secondAccent: '#7E57C2',
   },
 });
 
