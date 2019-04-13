@@ -51,6 +51,7 @@ contract SalesContract is Retraction {
         onlyBy(buyer) 
         contractIntact()
         contractIsRetracted(false)  
+        itemAlreadySet()
         paymentGreaterOrEqualPrice() 
     {
         item.itemPaid = true;
@@ -219,6 +220,19 @@ contract SalesContract is Retraction {
         require(
             itemIsSet == false, 
             "Item can only be set once"
+            );
+        _;
+    }
+
+    /**
+     * Modifier
+     * Check if item is set
+     */
+    modifier itemAlreadySet()
+     {
+        require(
+            itemIsSet == true, 
+            "Item is not set"
             );
         _;
     }
