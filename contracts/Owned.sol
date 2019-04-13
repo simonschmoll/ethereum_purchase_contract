@@ -31,13 +31,13 @@ contract Owned {
      * Change Seller
      * Prerequisite: Seller and contractRetracted == false
      */
-    function changeSeller(address payable _newSeller)
-        public
-        onlyBy(seller)
-        contractIsRetracted(false)
-    {
-        seller = _newSeller;
-    }
+    // function changeSeller(address payable _newSeller)
+    //     public
+    //     onlyBy(seller)
+    //     contractIsRetracted(false)
+    // {
+    //     seller = _newSeller;
+    // }
 
     /**
      * Getter
