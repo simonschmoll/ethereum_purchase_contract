@@ -26,6 +26,19 @@
                       </v-chip>
                     </td>
                   </tr>
+                  <tr>
+                    <td>Item Set?</td>
+                    <td>
+                      <v-chip small dark color="success" v-if="contract.itemIsSet">
+                        Yes
+                        <v-icon dark right>check_circle</v-icon>
+                      </v-chip>
+                      <v-chip small dark color="error" v-else>
+                        No
+                        <v-icon dark right>offline_bolt</v-icon>
+                      </v-chip>
+                    </td>
+                  </tr>
                 </table>
               </div>
             </v-card-text>
@@ -41,6 +54,19 @@
                   <tr>
                     <td>Account Name:</td>
                     <td style="word-break: break-all;">{{contract.buyer}}</td>
+                  </tr>
+                   <tr>
+                    <td>Retracted?</td>
+                    <td>
+                      <v-chip small dark color="success" v-if="getAgreement.buyerRetract">
+                        Yes
+                        <v-icon dark right>check_circle</v-icon>
+                      </v-chip>
+                      <v-chip small dark color="error" v-else>
+                        No
+                        <v-icon dark right>offline_bolt</v-icon>
+                      </v-chip>
+                    </td>
                   </tr>
                   <tr>
                     <td>Paid?</td>
@@ -69,22 +95,9 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>Paid Back?</td>
+                    <td>Payback?</td>
                     <td>
                       <v-chip small dark color="success" v-if="getBuyerIsPaidBack">
-                        Yes
-                        <v-icon dark right>check_circle</v-icon>
-                      </v-chip>
-                      <v-chip small dark color="error" v-else>
-                        No
-                        <v-icon dark right>offline_bolt</v-icon>
-                      </v-chip>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Retracted?</td>
-                    <td>
-                      <v-chip small dark color="success" v-if="getAgreement.buyerRetract">
                         Yes
                         <v-icon dark right>check_circle</v-icon>
                       </v-chip>
@@ -264,21 +277,6 @@
                 <v-layout align-center justify-center>
                   <v-flex shrink>
                     <v-btn
-                      :loading="loadingBuyerReceived"
-                      class="cardbutton v-btn--content-left"
-                      :disabled="loadingBuyerReceived
-                    || Boolean(getItem.itemReceived)
-                    || Boolean(contract.contractClosed)
-                    || Boolean(getAgreement.intermediatorRetract)"
-                      block
-                      large
-                      color="primary"
-                      @click="received();loader = 'loadingBuyerReceived'"
-                    >
-                      <v-icon color="info" x-large dark left>mail</v-icon>
-                      Received
-                    </v-btn>
-                    <v-btn
                       :loading="loadingBuyerPay"
                       class="cardbutton v-btn--content-left"
                       :disabled="loadingBuyerPay
@@ -292,6 +290,21 @@
                     >
                       <v-icon color="info" x-large dark left>payment</v-icon>
                       Pay {{getItem.price}}
+                    </v-btn>
+                    <v-btn
+                      :loading="loadingBuyerReceived"
+                      class="cardbutton v-btn--content-left"
+                      :disabled="loadingBuyerReceived
+                    || Boolean(getItem.itemReceived)
+                    || Boolean(contract.contractClosed)
+                    || Boolean(getAgreement.intermediatorRetract)"
+                      block
+                      large
+                      color="primary"
+                      @click="received();loader = 'loadingBuyerReceived'"
+                    >
+                      <v-icon color="info" x-large dark left>mail</v-icon>
+                      Received
                     </v-btn>
                     <v-btn
                       :loading="loadingBuyerRetract"

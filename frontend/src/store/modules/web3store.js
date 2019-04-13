@@ -36,7 +36,7 @@ export default {
     async connectToContract({ state, dispatch }, { contractAddr }) {
       const contractInstanceLocal = await
       web3util.loadExistingContract(contractAddr.toString());
-      console.log('contract Instance in loadInitData action', contractInstanceLocal);
+      console.log('contract Instance in connectToContract action', contractInstanceLocal);
       state.contractInstance = contractInstanceLocal;
       dispatch('loadContractData');
     },
@@ -58,7 +58,7 @@ export default {
     async loadContractData({ state, commit }) {
       console.log('Loading contract data (action)');
       if (state.contractInstance) {
-        console.log('Loading contract data (action) if condition');
+        console.log('Loading contract data (action) if condition, state:', state);
         web3util.loadContractData(state.contractInstance, state.contractState)
           .then((result) => { 
             state.loadingFlag = true;
