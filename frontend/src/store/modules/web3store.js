@@ -86,7 +86,8 @@ export default {
     },
 
     async setItem({ state, commit }, { name, price }) {
-      if(name = '' || !name) {
+      console.log('Name and price in store', name, price);
+      if(name === '' || !name) {
         state.errorFlag = true;
         state.errorMessage = 'Empty name is not allowed, please insert a name'
         throw Error('Empty name is not allowed, please insert a name')
@@ -95,8 +96,7 @@ export default {
         state.errorMessage = 'Price must not be empty or 0'
         throw Error('Price must not be empty or 0')
       }
-      console.log('Set Item account', window.web3.eth.defaultAccount);
-      web3util.setItem(state.contractInstance, name.toString(), price.toString())
+      web3util.setItem(state.contractInstance, name, price)
         .then(() => {
           state.loadingFlag = true;
           commit('setItem', { name, price });
