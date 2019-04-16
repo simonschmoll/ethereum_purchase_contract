@@ -209,7 +209,8 @@
                   || Boolean(getItemSet)
                   || Boolean(contract.contractClosed)
                   || Boolean(getAgreement.intermediatorRetract)"
-                  class="cardbutton v-btn--content-left" block large color="primary" @click.stop="setItemDialog=true"
+                  class="cardbutton v-btn--content-left" block
+                  large color="primary" @click.stop="setItemDialog=true"
                   >
                     <v-icon color="info" x-large left>add</v-icon>
                     Set Item...
@@ -232,7 +233,8 @@
                   :disabled="loadingSellerChange
                   || Boolean(contract.contractClosed)
                   || Boolean(getAgreement.intermediatorRetract)"
-                  class="cardbutton v-btn--content-left" block large color="primary" @click.stop="changeSellerDialog=true"
+                  class="cardbutton v-btn--content-left" block
+                  large color="primary" @click.stop="changeSellerDialog=true"
                   >
                     <v-icon color="warning" x-large left>loop</v-icon>
                     Change Seller...
@@ -258,13 +260,16 @@
                     <v-card color="white" hover>
                           <v-card-title primary-title>
                             <div>
-                              <v-text-field label="Name" v-model="itemName" name="itemName"></v-text-field>
-                              <v-text-field label="Price" v-model="itemPrice" name="itemPrice"></v-text-field>
+                              <v-text-field label="Name"
+                              v-model="itemName" name="itemName"></v-text-field>
+                              <v-text-field label="Price"
+                              v-model="itemPrice" name="itemPrice"></v-text-field>
                             </div>
                           </v-card-title>
                            <v-divider></v-divider>
                           <v-card-actions>
-                            <v-btn color="blue darken-1" flat @click="setItemDialog = false">Close</v-btn>
+                            <v-btn color="blue darken-1" flat
+                            @click="setItemDialog = false">Close</v-btn>
                             <v-btn
                               color="blue darken-1"
                               flat
@@ -278,12 +283,14 @@
                     <v-card color="white" hover>
                           <v-card-title primary-title>
                             <div>
-                              <v-text-field label="Account Address" v-model="newSeller" name="newSeller"></v-text-field>
+                              <v-text-field label="Account Address"
+                              v-model="newSeller" name="newSeller"></v-text-field>
                             </div>
                           </v-card-title>
                            <v-divider></v-divider>
                           <v-card-actions>
-                            <v-btn color="blue darken-1" flat @click="changeSellerDialog = false">Close</v-btn>
+                            <v-btn color="blue darken-1" flat
+                            @click="changeSellerDialog = false">Close</v-btn>
                             <v-btn
                               color="blue darken-1"
                               flat
