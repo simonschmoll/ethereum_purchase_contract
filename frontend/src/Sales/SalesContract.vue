@@ -209,7 +209,7 @@
                   || Boolean(getItemSet)
                   || Boolean(contract.contractClosed)
                   || Boolean(getAgreement.intermediatorRetract)"
-                  class="cardbutton v-btn--content-left" block large color="primary" @click.stop="dialog=true"
+                  class="cardbutton v-btn--content-left" block large color="primary" @click.stop="setItemDialog=true"
                   >
                     <v-icon color="info" x-large left>add</v-icon>
                     Set Item...
@@ -228,6 +228,16 @@
                     Withdraw
                   </v-btn>
                   <v-btn
+                  :loading="loadingSellerChange"
+                  :disabled="loadingSellerChange
+                  || Boolean(contract.contractClosed)
+                  || Boolean(getAgreement.intermediatorRetract)"
+                  class="cardbutton v-btn--content-left" block large color="primary" @click.stop="changeSellerDialog=true"
+                  >
+                    <v-icon color="warning" x-large left>loop</v-icon>
+                    Change Seller...
+                  </v-btn>
+                  <v-btn
                     class="cardbutton v-btn--content-left"
                     :loading="loadingSellerRetract"
                     :disabled="loadingSellerRetract
@@ -244,7 +254,7 @@
                   </v-btn>
                   </v-flex>
               </v-layout>
-              <v-dialog v-model="dialog" width="500">
+              <v-dialog v-model="setItemDialog" width="500">
                     <v-card color="white" hover>
                           <v-card-title primary-title>
                             <div>
@@ -254,13 +264,32 @@
                           </v-card-title>
                            <v-divider></v-divider>
                           <v-card-actions>
-                            <v-btn color="blue darken-1" flat @click="dialog = false">Close</v-btn>
+                            <v-btn color="blue darken-1" flat @click="setItemDialog = false">Close</v-btn>
                             <v-btn
                               color="blue darken-1"
                               flat
-                              @click="dialog = false;
-                                sendItem();loader = 'loadingSeller'"
+                              @click="setItemDialog = false;
+                                sendItem()"
                             >Set Item</v-btn>
+                          </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+              <v-dialog v-model="changeSellerDialog" width="500">
+                    <v-card color="white" hover>
+                          <v-card-title primary-title>
+                            <div>
+                              <v-text-field label="Account Address" v-model="newSeller" name="newSeller"></v-text-field>
+                            </div>
+                          </v-card-title>
+                           <v-divider></v-divider>
+                          <v-card-actions>
+                            <v-btn color="blue darken-1" flat @click="changeSellerDialog = false">Close</v-btn>
+                            <v-btn
+                              color="blue darken-1"
+                              flat
+                              @click="changeSellerDialog = false;
+                                changeSeller()"
+                            >Change Seller</v-btn>
                           </v-card-actions>
                     </v-card>
                   </v-dialog>
@@ -401,6 +430,7 @@ export default {
       loadingSellerSetItem: false,
       loadingSellerRetract: false,
       loadingSellerWithdraw: false,
+      loadingSellerChange: false,
       loadingBuyerReceived: false,
       loadingBuyerPay: false,
       loadingBuyerRetract: false,
@@ -410,7 +440,8 @@ export default {
       itemName: '',
       itemPrice: null,
       newSeller: null,
-      dialog: false,
+      setItemDialog: false,
+      changeSellerDialog: false,
     };
   },
   computed: {
@@ -438,7 +469,7 @@ export default {
     sendItem() {
       const name = this.itemName;
       const price = this.itemPrice;
-      console.log('Item price in sendItem:', price);
+      console.log('Item price and name in sendItem:', price, name);
       this.$store.dispatch('setItem', { name, price });
     },
     received() {
@@ -484,6 +515,7 @@ export default {
       if (this.loadingFlag) {
         this.loadingSellerSetItem = false;
         this.loadingSellerRetract = false;
+        this.loadingSellerChange = false;
         this.loadingSellerWithdraw = false;
         this.loadingBuyerReceived = false;
         this.loadingBuyerPay = false;

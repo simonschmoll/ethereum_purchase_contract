@@ -67,6 +67,7 @@ async function loadContractData(contract, contractState) {
 }
 
 async function setItem(contractInstance, name, price) {
+  console.log('name and price in util', name, price);
   return contractInstance.methods.setItem(name.toString(), getWeb3.utils.toWei(price.toString()))
     .send({ from: window.web3.eth.defaultAccount });
 }
