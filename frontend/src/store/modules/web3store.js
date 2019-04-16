@@ -224,7 +224,7 @@ export default {
     getAgreement: state => state.contractState.agreement,
     getBuyerIsPaidBack: state => state.contractState.buyerIsPaidBack,
     getBalance: state => state.contractState.balance,
-    getContractAddress: state => state.contractInstance.options.address,
+    getContractAddress: state => state.contractInstance ? state.contractInstance.options.address : undefined,
     getItemSet: state => state.contractState.itemIsSet,
   },
   mutations: {
