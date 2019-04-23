@@ -61,12 +61,12 @@ export default {
         console.log('Loading contract data (action) if condition, state:', state);
         web3util.loadContractData(state.contractInstance, state.contractState)
           .then((result) => { 
-            state.loadingFlag = true;
+            state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
             commit('saveContractData', result); 
           })
           .catch((error) => {
             state.errorFlag = true;
-            state.loadingFlag = true;
+            state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
             state.errorMessage = error.message ? error.message : 'Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache';
           });
       }
@@ -75,17 +75,17 @@ export default {
       console.log('changeSeller (action)', newSellerAddress);
       web3util.changeSeller(state.contractInstance, newSellerAddress)
       .then(() => {
-        state.loadingFlag = true;
+        state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
         dispatch('loadContractData')
       })
       .catch((error) => {
         state.errorFlag = true;
-        state.loadingFlag = true;
+        state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
         state.errorMessage = error.message ? error.message : 'Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache';
       });
     },
 
-    async setItem({ state, commit }, { name, price }) {
+    async setItem({ state, dispatch }, { name, price }) {
       console.log('Name and price in store', name, price);
       if(name === '' || !name) {
         state.errorFlag = true;
@@ -98,122 +98,121 @@ export default {
       }
       web3util.setItem(state.contractInstance, name, price)
         .then(() => {
-          state.loadingFlag = true;
-          commit('setItem', { name, price });
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
+          dispatch('loadContractData');
         })
         .catch((error) => {
           state.errorFlag = true;
-          state.loadingFlag = true;
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
           state.errorMessage = error.message ? error.message : 'Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache';
         });
     },
-    async receivedItem({ state, commit }) {
+    async receivedItem({ state, dispatch }) {
       web3util.itemReceived(state.contractInstance)
         .then(() => {
-          commit('receivedItem');
-          state.loadingFlag = true;
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
+          dispatch('loadContractData');
           })
         .catch((error) => {
           state.errorFlag = true;
-          state.loadingFlag = true;
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
           state.errorMessage = error.message ? error.message : 'Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache';
         });
     },
-    async deploy({ commit, dispatch }, { seller, buyer, intermediator }) {
+    async deploy({ state, commit, dispatch }, { seller, buyer, intermediator }) {
       console.log('mutation deploy called in store', seller, buyer, intermediator);
       web3util.deployContract(seller, buyer, intermediator)
         .then((instance) => {
-          state.loadingFlag = true;
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
           commit('saveContract', instance);
           dispatch('loadInitialData');
         }).catch((error) => {
           state.errorFlag = true;
-          state.loadingFlag = true;
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
           state.errorMessage = error.message ? error.message : 'Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache';
         });
     },
     async pay({ dispatch, state }, price) {
       web3util.payItem(state.contractInstance, price)
         .then(() => {
-          state.loadingFlag = true;
-          dispatch('loadBalance');
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
+          dispatch('loadContractData');
       })
         .catch((error) => {
           state.errorFlag = true;
-          state.loadingFlag = true;
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
           state.errorMessage = error.message ? error.message : 'Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache';
         });
     },
-    async loadBalance({ commit, state }) {
+    async loadBalance({ dispatch, state }) {
       web3util.getBalance(state.contractInstance)
         .then((balance) => {
-          state.loadingFlag = true;
-          commit('pay');
-          commit('updateBalance', balance);
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
+          dispatch('loadContractData');
         })
         .catch((error) => {
           state.errorFlag = true;
-          state.loadingFlag = true;
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
           state.errorMessage = error.message ? error.message : 'Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache';
         });
     },
-    async withdraw({ commit, state }) {
+    async withdraw({ dispatch, state }) {
       web3util.withdraw(state.contractInstance)
         .then(() => {
-          state.loadingFlag = true;
-          commit('withdraw');
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
+          dispatch('loadContractData');
       })
         .catch((error) => {
           state.errorFlag = true;
-          state.loadingFlag = true;
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
           state.errorMessage = error.message ? error.message : 'Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache';
         });
     },
     async retract({ dispatch, state }) {
       web3util.retractContract(state.contractInstance)
         .then(() => {
-          state.loadingFlag = true;
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
           dispatch('loadContractData');
       })
         .catch((error) => {
           state.errorFlag = true;
-          state.loadingFlag = true;
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
           state.errorMessage = error.message ? error.message : 'Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache';
         });
     },
     async finalizeRetraction({ dispatch, state }, buyerRuledRight) {
       web3util.finalizeRetraction(state.contractInstance, buyerRuledRight)
        .then(() => {
-        state.loadingFlag = true;
+        state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
          dispatch('loadContractData');
         })
        .catch((error) => {
         state.errorFlag = true;
-        state.loadingFlag = true;
+        state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
         state.errorMessage = error.message ? error.message : 'Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache';
       });
     },
     async withdrawAfterDisputeBuyer({ dispatch, state }) {
       web3util.withdrawAfterDisputeBuyer(state.contractInstance)
         .then(() => {
-          state.loadingFlag = true;
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
           dispatch('loadContractData');
         })
         .catch((error) => {
           state.errorFlag = true;
-          state.loadingFlag = true;
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
           state.errorMessage = error.message ? error.message : 'Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache';
         });
     },
     async withdrawAfterDisputeSeller({ dispatch, state }) {
       web3util.withdrawAfterDisputeSeller(state.contractInstance)
         .then(() => {
-          state.loadingFlag = true;
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
           dispatch('loadContractData');
         })
         .catch((error) => {
           state.errorFlag = true;
-          state.loadingFlag = true;
+          state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
           state.errorMessage = error.message ? error.message : 'Something went wrong, please check if you have the correct MetaMask account selected for this action and that you are running an instance of ganache';
         });
     },
@@ -232,35 +231,8 @@ export default {
       console.log('deploy mutation contract instance =', payload);
       state.contractInstance = payload;
     },
-    receivedItem(state) {
-      console.log('Received action called');
-      state.contractState.item = Object.assign(
-        {}, state.contractState.item, { itemReceived: true },
-      );
-    },
-    setItem(state, { name, price }) {
-      state.contractState.item = Object.assign({}, state.contractState.item, { name, price });
-      console.log('New item state after setting item in mutation', state.contractState.item);
-    },
-    loadInitialData(state, payload) {
-      state.contractState = payload;
-      console.log('Intial Contract State: ', payload);
-    },
     saveContractData(state, payload) {
       state.contractState = payload;
-    },
-    pay(state) {
-      state.contractState.item = Object.assign({}, state.contractState.item, { itemPaid: true });
-      console.log('Changing state of item after payment in mutations');
-    },
-    withdraw(state) {
-      console.log('Contract is now closed');
-      state.contractState.contractClosed = true;
-      console.log('ContractStatus', state.contractClosed);
-    },
-    updateBalance(state, payload) {
-      console.log('Updating Balance:', payload);
-      state.contractState.balance = payload;
     },
     changeLoadingFlag(state) {
       console.log('state loading flag change mutation')

@@ -274,7 +274,7 @@
                               color="blue darken-1"
                               flat
                               @click="setItemDialog = false;
-                                sendItem()"
+                                sendItem(); loader = 'loadingSellerSetItem'"
                             >Set Item</v-btn>
                           </v-card-actions>
                     </v-card>
@@ -295,7 +295,7 @@
                               color="blue darken-1"
                               flat
                               @click="changeSellerDialog = false;
-                                changeSeller()"
+                                changeSeller(); loader = 'loadingSellerChange'"
                             >Change Seller</v-btn>
                           </v-card-actions>
                     </v-card>
