@@ -14,9 +14,9 @@
                     <td style="word-break: break-all;">{{contract.seller}}</td>
                   </tr>
                   <tr>
-                    <td>Retracted?</td>
+                    <td>Item Set?</td>
                     <td>
-                      <v-chip small dark color="success" v-if="getAgreement.sellerRetract">
+                      <v-chip small dark color="success" v-if="contract.itemIsSet">
                         Yes
                         <v-icon dark right>check_circle</v-icon>
                       </v-chip>
@@ -27,9 +27,9 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>Item Set?</td>
+                    <td>Retracted?</td>
                     <td>
-                      <v-chip small dark color="success" v-if="contract.itemIsSet">
+                      <v-chip small dark color="success" v-if="getAgreement.sellerRetract">
                         Yes
                         <v-icon dark right>check_circle</v-icon>
                       </v-chip>
@@ -54,19 +54,6 @@
                   <tr>
                     <td>Account Name:</td>
                     <td style="word-break: break-all;">{{contract.buyer}}</td>
-                  </tr>
-                   <tr>
-                    <td>Retracted?</td>
-                    <td>
-                      <v-chip small dark color="success" v-if="getAgreement.buyerRetract">
-                        Yes
-                        <v-icon dark right>check_circle</v-icon>
-                      </v-chip>
-                      <v-chip small dark color="error" v-else>
-                        No
-                        <v-icon dark right>offline_bolt</v-icon>
-                      </v-chip>
-                    </td>
                   </tr>
                   <tr>
                     <td>Paid?</td>
@@ -98,6 +85,19 @@
                     <td>Payback?</td>
                     <td>
                       <v-chip small dark color="success" v-if="getBuyerIsPaidBack">
+                        Yes
+                        <v-icon dark right>check_circle</v-icon>
+                      </v-chip>
+                      <v-chip small dark color="error" v-else>
+                        No
+                        <v-icon dark right>offline_bolt</v-icon>
+                      </v-chip>
+                    </td>
+                  </tr>
+                   <tr>
+                    <td>Retracted?</td>
+                    <td>
+                      <v-chip small dark color="success" v-if="getAgreement.buyerRetract">
                         Yes
                         <v-icon dark right>check_circle</v-icon>
                       </v-chip>
@@ -161,9 +161,9 @@
                     <td>{{getItem.price}}</td>
                   </tr>
                   <tr>
-                    <td>Retracted?</td>
+                    <td>Closed?</td>
                     <td>
-                      <v-chip small dark color="success" v-if="contract.retracted">
+                      <v-chip small dark color="success" v-if="contract.contractClosed">
                         Yes
                         <v-icon dark right>check_circle</v-icon>
                       </v-chip>
@@ -173,10 +173,10 @@
                       </v-chip>
                     </td>
                   </tr>
-                  <tr>
-                    <td>Closed?</td>
+                   <tr>
+                    <td>Retracted?</td>
                     <td>
-                      <v-chip small dark color="success" v-if="contract.contractClosed">
+                      <v-chip small dark color="success" v-if="contract.retracted">
                         Yes
                         <v-icon dark right>check_circle</v-icon>
                       </v-chip>
