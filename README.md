@@ -40,6 +40,7 @@ from the root directory
 
 To migrate the contract use:  
 `truffle migrate` from the root directory  
+**For testing you need to have a local instance of Ganache running**  
 To start the tests use:  
 `truffle test` from the root directory or to run specific tests you can specify the location of a test after the command
 
