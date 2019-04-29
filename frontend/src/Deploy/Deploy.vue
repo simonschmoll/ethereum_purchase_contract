@@ -102,7 +102,7 @@ export default {
 
       setTimeout(() => {
         (this[l] = false);
-      }, 7000);
+      }, 35000);
 
       this.loader = null;
     },
