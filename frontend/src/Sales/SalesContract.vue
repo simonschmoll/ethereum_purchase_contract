@@ -10,7 +10,7 @@
                 <v-divider class="divider"></v-divider>
                 <table>
                   <tr>
-                    <td>Account Name:</td>
+                    <td>Account Address:</td>
                     <td style="word-break: break-all;">{{contract.seller}}</td>
                   </tr>
                   <tr>
@@ -52,7 +52,7 @@
                 <v-divider class="divider"></v-divider>
                 <table>
                   <tr>
-                    <td>Account Name:</td>
+                    <td>Account Address:</td>
                     <td style="word-break: break-all;">{{contract.buyer}}</td>
                   </tr>
                   <tr>
@@ -120,7 +120,7 @@
                 <v-divider class="divider"></v-divider>
                 <table>
                   <tr>
-                    <td>Account Name:</td>
+                    <td>Account Address:</td>
                     <td style="word-break: break-all;">{{contract.intermediator}}</td>
                   </tr>
                   <tr>
@@ -149,15 +149,15 @@
                 <v-divider class="divider"></v-divider>
                 <table>
                   <tr>
-                    <td>Account Name:</td>
+                    <td>Account Address:</td>
                     <td style="word-break: break-all;">{{getContractAddress}}</td>
                   </tr>
                   <tr>
-                    <td>Item Name</td>
+                    <td>Item Name:</td>
                     <td>{{getItem.name}}</td>
                   </tr>
                   <tr>
-                    <td>Item Price</td>
+                    <td>Item Price:</td>
                     <td>{{getItem.price}}</td>
                   </tr>
                   <tr>
@@ -513,7 +513,7 @@ export default {
 
       setTimeout(() => {
         this[l] = false;
-      }, 15000);
+      }, 35000);
 
       this.loader = null;
     },
