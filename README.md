@@ -74,7 +74,10 @@ Steps necessary:
   - Repeat this instruction 2 more times
 - Now you should have imported 3 different accounts (in total there a now 4 accounts in MetaMask - with the default account included)
 
-Now you are ready to interact with the contract.  
+Repeat 3 times:
+![](metaMaskInstruction.gif)
+
+You are ready to interact with the contract.  
 Go to http://localhost:8082/  
 
 Deployment:
