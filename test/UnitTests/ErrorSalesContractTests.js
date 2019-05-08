@@ -146,6 +146,7 @@ contract('Error test for sales contract', async (accounts) => {
         await instance.setItem(book, price)
         await instance.payItem({value: price, from: buyer})
         try {
+            // When
             await instance.withdraw({from: seller})
             assert.fail("withdraw should fail")            
         } catch (error) {
@@ -161,6 +162,7 @@ contract('Error test for sales contract', async (accounts) => {
         await instance.itemReceived({from: buyer})
         await instance.withdraw({from: seller})
         try {
+            // When
             await instance.withdraw({from: seller})
             assert.fail("withdraw should fail")            
         } catch (error) {
@@ -176,6 +178,7 @@ contract('Error test for sales contract', async (accounts) => {
         await instance.retractContract({from: buyer})
         await instance.finalizeRetraction(true, {from: intermediator})
         try {
+            // When
             await instance.withdraw({from: seller})
             assert.fail("withdraw should fail")            
         } catch (error) {
@@ -191,6 +194,7 @@ contract('Error test for sales contract', async (accounts) => {
         await instance.retractContract({from: seller})
         await instance.finalizeRetraction(false, {from: intermediator})
         try {
+            // When
             await instance.withdraw({from: buyer})
             assert.fail("withdraw should fail")            
         } catch (error) {
