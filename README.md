@@ -67,6 +67,8 @@ Next create a wallet in MetaMask (open MetaMask and follow the instructions)
 
 Steps necessary: 
 - Open the MetaMask extension
+- In privacy settings turn of privacy mode because otherwise the application is not capable of interacting with MetaMask
+Don't forget to turn it on again, if you use MetaMask for the main network. This is just for testing purposes.
 - Import three accounts from the current Ethereum instance
   - Therefore open Ganache and copy the private key of an account
   - In MetaMask click in the right corner and select 'Import Account'
