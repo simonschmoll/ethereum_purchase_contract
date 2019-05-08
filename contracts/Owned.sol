@@ -43,7 +43,7 @@ contract Owned {
      * Getter
      * returns { boolean } if contract is retracted
      */
-    function getContractRetracted() 
+    function getContractRetracted()
         public
         view
         returns (bool)
@@ -55,7 +55,7 @@ contract Owned {
      * Getter
      * returns { boolean } if contract is closed
      */
-    function getIsContractClosed() 
+    function getIsContractClosed()
         public
         view
         returns (bool)
@@ -67,7 +67,7 @@ contract Owned {
      * Getter
      * returns { address } of seller
      */
-    function getSeller() 
+    function getSeller()
         public
         view
         returns (address)
@@ -79,7 +79,7 @@ contract Owned {
      * Getter
      * returns { address } of buyer
      */
-    function getBuyer() 
+    function getBuyer()
         public
         view
         returns (address)
@@ -91,7 +91,7 @@ contract Owned {
      * Getter
      * returns { address } of intermediator
      */
-    function getIntermediator() 
+    function getIntermediator()
         public
         view
         returns (address)
@@ -103,7 +103,7 @@ contract Owned {
      * Getter
      * returns { uint } creationTime
      */
-    function getCreationTime() 
+    function getCreationTime()
         public
         view
         returns (uint)
@@ -115,7 +115,7 @@ contract Owned {
      * Modifier
      * Only _account is qualified to access function
      */
-    modifier onlyBy(address _account) 
+    modifier onlyBy(address _account)
     {
         require(
             msg.sender == _account,
@@ -128,7 +128,7 @@ contract Owned {
      * Modifier
      * Only _account is qualified to access function
      */
-    modifier onlyBySellerOrBuyer() 
+    modifier onlyBySellerOrBuyer()
     {
         require(
             (msg.sender == seller) || (msg.sender == buyer),
@@ -167,9 +167,10 @@ contract Owned {
      */
     modifier onlyMemberOfContract() {
         require(
-            msg.sender == seller || 
-            msg.sender == buyer || 
-            msg.sender == intermediator
+            msg.sender == seller ||
+            msg.sender == buyer ||
+            msg.sender == intermediator,
+            "Only members of contract can call this function"
         );
         _;
     }
@@ -180,7 +181,7 @@ contract Owned {
      */
     modifier contractIsRetracted(bool retracted) {
         require(
-            contractRetracted == retracted, 
+            contractRetracted == retracted,
             "Contract does not satisfy the retraction precondition"
         );
         _;
