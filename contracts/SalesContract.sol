@@ -22,7 +22,7 @@ contract SalesContract is Retraction {
 
     struct Item {
         string name;
-        uint price;   
+        uint price;
         bool itemReceived;
         bool itemPaid;
     }
@@ -34,8 +34,8 @@ contract SalesContract is Retraction {
      * Constructor
      * Sets the buyer and the intermediator
      */
-    constructor(address payable _buyer, address _intermediator) 
-        public 
+    constructor(address payable _buyer, address _intermediator)
+        public
     {
         buyer = _buyer;
         intermediator = _intermediator;
@@ -45,14 +45,14 @@ contract SalesContract is Retraction {
      * Pay item
      * Modifier: only buyer, contractIntact == true, msg.value == price
      */
-    function payItem() 
-        public 
-        payable 
-        onlyBy(buyer) 
+    function payItem()
+        public
+        payable
+        onlyBy(buyer)
         contractIntact()
-        contractIsRetracted(false)  
+        contractIsRetracted(false)
         itemAlreadySet()
-        paymentGreaterOrEqualPrice() 
+        paymentGreaterOrEqualPrice()
     {
         item.itemPaid = true;
         emit PaidItem(seller, msg.sender, msg.value);
@@ -63,10 +63,10 @@ contract SalesContract is Retraction {
      * If item is received buyer can call this function
      * Modifier: only buyer, itemPaid == true
      */
-    function itemReceived() 
-        public 
+    function itemReceived()
+        public
         onlyBy(buyer)
-        itemIsPaid() 
+        itemIsPaid()
     {
         item.itemReceived = true;
     }
@@ -76,9 +76,9 @@ contract SalesContract is Retraction {
      * Seller can withdraw money
      * Modifier: only seller, itemReceived == true, contractIsClosed == true, contractRetracted == false
      */
-    function withdraw() 
-        public 
-        onlyBySellerOrBuyer() 
+    function withdraw()
+        public
+        onlyBySellerOrBuyer()
         contractIntact()
     {
         if(contractRetracted) {
@@ -93,7 +93,7 @@ contract SalesContract is Retraction {
                     "Sender is not the allowed to perform this action."
                 );
             }
-            emit WithdrawalFromRetraction(msg.sender, item.price); 
+            emit WithdrawalFromRetraction(msg.sender, item.price);
         } else {
             require(
                 item.itemReceived == true,
@@ -114,9 +114,9 @@ contract SalesContract is Retraction {
      * Setter
      * Sets the Item (name, price, default itemPaid, default itemReceived)
      */
-    function setItem(string memory _name, uint _price) 
-        public 
-        onlyBy(seller) 
+    function setItem(string memory _name, uint _price)
+        public
+        onlyBy(seller)
         itemIsNotSet()
     {
         item.name = _name;
@@ -176,10 +176,10 @@ contract SalesContract is Retraction {
      * Modifier
      * Check if item is paid
      */
-    modifier itemIsPaid() 
+    modifier itemIsPaid()
     {
         require(
-            item.itemPaid == true, 
+            item.itemPaid == true,
             "Item not paid"
             );
         _;
@@ -189,10 +189,10 @@ contract SalesContract is Retraction {
      * Modifier
      * Check if item is received
      */
-    modifier itemIsReceived() 
+    modifier itemIsReceived()
     {
         require(
-            item.itemReceived == true, 
+            item.itemReceived == true,
             "Item not received"
             );
         _;
@@ -202,10 +202,10 @@ contract SalesContract is Retraction {
      * Modifier
      * Check if value of msg sender is equal to price of item
      */
-    modifier paymentGreaterOrEqualPrice() 
+    modifier paymentGreaterOrEqualPrice()
     {
         require(
-            msg.value >= item.price, 
+            msg.value >= item.price,
             "The paid amount was not equal to the listed price of the item"
             );
         _;
@@ -218,7 +218,7 @@ contract SalesContract is Retraction {
     modifier itemIsNotSet()
      {
         require(
-            itemIsSet == false, 
+            itemIsSet == false,
             "Item can only be set once"
             );
         _;
@@ -231,7 +231,7 @@ contract SalesContract is Retraction {
     modifier itemAlreadySet()
      {
         require(
-            itemIsSet == true, 
+            itemIsSet == true,
             "Item is not set"
             );
         _;
