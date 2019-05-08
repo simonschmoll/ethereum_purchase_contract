@@ -158,7 +158,7 @@
                   </tr>
                   <tr>
                     <td>Item Price:</td>
-                    <td>{{getItem.price}}</td>
+                    <td>{{getItem.price}} Eth</td>
                   </tr>
                   <tr>
                     <td>Closed?</td>
