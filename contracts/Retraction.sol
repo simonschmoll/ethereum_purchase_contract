@@ -14,8 +14,8 @@ contract Retraction is Owned {
     event WithdrawalFromRetraction(
         address retractor,
         uint price
-    );  
-    
+    );
+
     /**
      * Constructor
      * Sets the values of the agreement to zero
@@ -30,8 +30,8 @@ contract Retraction is Owned {
      * Retract Contract
      * Modifier: only seller or buyer, contractRetracted == false, contractClosed == false
      */
-    function retractContract() 
-        public 
+    function retractContract()
+        public
         onlyBySellerOrBuyer()
         contractIsRetracted(false)
         contractIntact()
@@ -39,8 +39,8 @@ contract Retraction is Owned {
         if(msg.sender == seller) {
             agreement.sellerRetract = true;
         } else if (msg.sender == buyer) {
-            agreement.buyerRetract = true;     
-        } 
+            agreement.buyerRetract = true;
+        }
     }
 
     /**
@@ -68,7 +68,7 @@ contract Retraction is Owned {
      * returns { struct Agreement }
      */
     function getAgreement()
-        public 
+        public
         view
         returns (Agreement memory a)
     {
@@ -94,8 +94,8 @@ contract Retraction is Owned {
     modifier buyerIsRuledRight(bool ruling) {
         require(
             buyerIsPaidBack == ruling,
-            ruling ? 
-            "Buyer can not withdraw money" : 
+            ruling ?
+            "Buyer can not withdraw money" :
             "Seller can not withdraw money"
         );
         _;
