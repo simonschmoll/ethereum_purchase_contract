@@ -36,7 +36,6 @@ export default {
     async connectToContract({ state, dispatch }, { contractAddr }) {
       const contractInstanceLocal = await
       web3util.loadExistingContract(contractAddr.toString());
-      console.log('contract Instance in connectToContract action', contractInstanceLocal);
       state.contractInstance = contractInstanceLocal;
       dispatch('loadContractData');
     },
@@ -49,16 +48,13 @@ export default {
       }
     },
     async loadInitialData({ state, dispatch }) {
-      console.log('Loading InitialData');
 
       if (state.contractInstance) {
         dispatch('loadContractData')
       }
     },
     async loadContractData({ state, commit }) {
-      console.log('Loading contract data (action)');
       if (state.contractInstance) {
-        console.log('Loading contract data (action) if condition, state:', state);
         web3util.loadContractData(state.contractInstance, state.contractState)
           .then((result) => { 
             state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
@@ -72,7 +68,6 @@ export default {
       }
     },
     async changeSeller( { state, dispatch }, newSellerAddress) {
-      console.log('changeSeller (action)', newSellerAddress);
       web3util.changeSeller(state.contractInstance, newSellerAddress)
       .then(() => {
         state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
@@ -86,7 +81,6 @@ export default {
     },
 
     async setItem({ state, dispatch }, { name, price }) {
-      console.log('Name and price in store', name, price);
       if(name === '' || !name) {
         state.errorFlag = true;
         state.errorMessage = 'Empty name is not allowed, please insert a name'
@@ -120,7 +114,6 @@ export default {
         });
     },
     async deploy({ state, commit, dispatch }, { seller, buyer, intermediator }) {
-      console.log('mutation deploy called in store', seller, buyer, intermediator);
       web3util.deployContract(seller, buyer, intermediator)
         .then((instance) => {
           state.loadingFlag = Object.assign({}, state.loadingFlag, state.loadingFlag = true);
@@ -228,14 +221,12 @@ export default {
   },
   mutations: {
     saveContract(state, payload) {
-      console.log('deploy mutation contract instance =', payload);
       state.contractInstance = payload;
     },
     saveContractData(state, payload) {
       state.contractState = payload;
     },
     changeLoadingFlag(state) {
-      console.log('state loading flag change mutation')
       state.loadingFlag = false;
     },
     changeErrorFlagAndMessage(state) {

@@ -39,7 +39,6 @@ export default {
     };
   },
   created() {
-    console.log('Create web3 instance from SalesContract app');
     this.$store.dispatch('loadInitialData');
     this.poll();
   },
@@ -55,7 +54,6 @@ export default {
   },
   computed: {
     contractInstance() {
-      console.log('Returning contractInstance', this.$store.state.contractInstance);
       return this.$store.state.web3Module.contractInstance;
     },
     ...mapGetters({

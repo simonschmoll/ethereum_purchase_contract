@@ -73,7 +73,6 @@ export default {
       const buyer = this.addrBuyer;
       const intermediator = this.addrIntermediator;
       const seller = this.addrSeller;
-      console.log('Sending deploy data to store: ', seller, buyer, intermediator);
       this.$store.dispatch('deploy', { seller, buyer, intermediator });
     },
     connectToContract() {
@@ -83,7 +82,6 @@ export default {
   },
   computed: {
     deployed() {
-      console.log('Deployed contract?', this.$store.state.web3Module.deployedContract);
       return this.$store.state.web3Module.deployedContract;
     },
     loadingFlag() {
@@ -96,7 +94,6 @@ export default {
   watch: {
     loader() {
       const l = this.loader;
-      console.log('Load called');
 
       this[l] = !this[l];
 

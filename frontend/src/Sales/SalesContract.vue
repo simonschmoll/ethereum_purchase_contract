@@ -462,10 +462,6 @@ export default {
       getItemSet: 'getItemSet',
     }),
     contract() {
-      console.log(
-        'Returning contract instance',
-        this.$store.state.web3Module.contractState,
-      );
       return this.$store.state.web3Module.contractState;
     },
     loadingFlag() {
@@ -476,38 +472,31 @@ export default {
     sendItem() {
       const name = this.itemName;
       const price = this.itemPrice;
-      console.log('Item price and name in sendItem:', price, name);
       this.$store.dispatch('setItem', { name, price });
     },
     received() {
-      console.log('received called from component');
       this.$store.dispatch('receivedItem');
     },
     pay(price) {
-      console.log('User wants to pay item (SalesContract)');
       this.$store.dispatch('pay', price);
     },
     withdraw() {
-      console.log('User wants to withdraw money');
       this.$store.dispatch('withdraw');
     },
     retractIntermed(buyerIsRight) {
       this.$store.dispatch('finalizeRetraction', buyerIsRight);
     },
     retract() {
-      console.log('User wants to retract (SalesContract)');
       this.$store.dispatch('retract');
     },
     changeSeller() {
       const newSellerAddress = this.newSeller;
-      console.log('User wants to change seller', newSellerAddress);
       this.$store.dispatch('changeSeller', newSellerAddress);
     },
   },
   watch: {
     loader() {
       const l = this.loader;
-      console.log('Load called');
 
       this[l] = !this[l];
 
@@ -518,7 +507,6 @@ export default {
       this.loader = null;
     },
     loadingFlag() {
-      console.log('loading flag is', this.loadingFlag);
       if (this.loadingFlag) {
         this.loadingSellerSetItem = false;
         this.loadingSellerRetract = false;

@@ -15,8 +15,6 @@ async function deployContract(seller, buyer, intermediator) {
   const contract = new getWeb3.eth.Contract(
     abi,
   );
-  console.log('Seller, Buyer, Interm and window.default in web3util deploy:', seller, buyer, intermediator, window.web3.eth.defaultAccount);
-  console.log('Result of comparison', seller.toString() !== (window.web3.eth.defaultAccount).toString());
   return contract.deploy({
     data: bytecode.toString(),
     arguments: [buyer, intermediator],
@@ -31,7 +29,6 @@ async function loadExistingContract(address) {
 }
 
 async function changeSeller(contractInstance, newSellerAddress) {
-  console.log('Change seller called in webutil', newSellerAddress);
   return contractInstance.methods.changeSeller(newSellerAddress)
     .send({ from: window.web3.eth.defaultAccount });
 }
@@ -67,49 +64,41 @@ async function loadContractData(contract, contractState) {
 }
 
 async function setItem(contractInstance, name, price) {
-  console.log('name and price in util', name, price);
   return contractInstance.methods.setItem(name.toString(), getWeb3.utils.toWei(price.toString()))
     .send({ from: window.web3.eth.defaultAccount });
 }
 
 async function itemReceived(contractInstance) {
-  console.log('Default account in item received', window.web3.eth.defaultAccount);
   return contractInstance.methods.itemReceived()
     .send({ from: window.web3.eth.defaultAccount });
 }
 
 async function payItem(contractInstance, price) {
-  console.log('Paying called in webutil', price);
   const priceInWei = getWeb3.utils.toWei(price);
   return contractInstance.methods.payItem()
     .send({ from: window.web3.eth.defaultAccount, value: priceInWei });
 }
 
 async function withdraw(contractInstance) {
-  console.log('Withdraw called in webutil');
   return contractInstance.methods.withdraw()
     .send({ from: window.web3.eth.defaultAccount });
 }
 
 async function retractContract(contractInstance) {
-  console.log('Retract called in webutil');
   return contractInstance.methods.retractContract()
     .send({ from: window.web3.eth.defaultAccount });
 }
 
 async function finalizeRetraction(contractInstance, buyerRuledRight) {
-  console.log('Finalize Retraction called in webutil', buyerRuledRight);
   return contractInstance.methods.finalizeRetraction(buyerRuledRight)
     .send({ from: window.web3.eth.defaultAccount });
 }
 
 async function getAgreement(contract) {
-  console.log('getAgreement called in web3util');
   return contract.methods.getAgreement().call();
 }
 
 async function getBalance(contract) {
-  console.log('getAgreement called in web3util');
   return contract.methods.getContractBalance().call();
 }
 
