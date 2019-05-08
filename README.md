@@ -18,7 +18,7 @@ Of course, this setup introduces problems such as a 2-1 plot against either the 
 You need to have npm installed to work with this implementation.  
 It is recommended to use a node version manager such as nvm  (https://github.com/creationix/nvm) to install npm
 
-## Ganache
+## Ganache (v1.2.1)
 Start your own local ethereum blockchain with the ganache tool (available at https://github.com/trufflesuite/ganache-cli)
 
 
@@ -28,7 +28,7 @@ Optionally, you can also download the GUI version of Ganache, this will persist 
 Note: the optional parameter `-e 10000` gives all the addresses 10000 Ether instead of 100. This is preferable if you want test the code.  
 Please make sure that ganache runs at http://127.0.0.1:8545
 
-## Truffle test suit
+## Truffle test suit (v5.0.0-beta.2)
 Get truffle at: https://truffleframework.com/truffle
 
 After installing all the necessary tools, please run:  
